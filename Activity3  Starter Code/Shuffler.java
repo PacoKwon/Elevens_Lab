@@ -7,7 +7,7 @@ public class Shuffler {
 	 * The number of consecutive shuffle steps to be performed in each call
 	 * to each sorting procedure.
 	 */
-	private static final int SHUFFLE_COUNT = 1;
+	private static final int SHUFFLE_COUNT = 5;
 
 
 	/**
@@ -50,7 +50,23 @@ public class Shuffler {
 	 * @param values is an array of integers simulating cards to be shuffled.
 	 */
 	public static void perfectShuffle(int[] values) {
-		/* *** TO BE IMPLEMENTED IN ACTIVITY 3 *** */
+		int[] shuffled = new int[values.length];
+
+		int k = 0;
+		for (int j = 0; j < values.length / 2; j++) {
+			shuffled[k] = values[j];
+			k += 2;
+		}
+
+		k = 1;
+		for (int j = values.length / 2; j < values.length; j++) {
+			shuffled[k] = values[j];
+			k += 2;
+		}
+
+		for (int i = 0; i < values.length; i++) {
+			values[i] = shuffled[i];
+		}
 	}
 
 	/**
@@ -65,6 +81,33 @@ public class Shuffler {
 	 * @param values is an array of integers simulating cards to be shuffled.
 	 */
 	public static void selectionShuffle(int[] values) {
-		/* *** TO BE IMPLEMENTED IN ACTIVITY 3 *** */
+		for (int k = values.length - 1; k >= 1; k--) {
+			int r = (int)(Math.random() * k);
+
+			int tmp = values[k];
+			values[k] = values[r];
+			values[r] = tmp;
+		}
+	}
+
+	public static String flip() {
+		int p = (int)(Math.random() * 3);
+		if (p < 2) {
+			return "heads";
+		} else {
+			return "tails";
+		}
+	}
+
+	public static boolean arePermutations(int[] a, int[] b) {
+		if (a.length != b.length) return false;
+
+		java.util.Arrays.sort(a);
+		java.util.Arrays.sort(b);
+
+		for (int i = 0; i < a.length; i++) {
+			if (a[i] != b[i]) return false;
+		}
+		return true;
 	}
 }

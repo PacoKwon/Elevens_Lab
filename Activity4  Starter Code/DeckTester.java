@@ -52,5 +52,12 @@ public class DeckTester {
 		System.out.println();
 
 		/* *** TO BE COMPLETED IN ACTIVITY 4 *** */
+		Deck deck = new Deck(
+			new String[]{"Ace", "King", "Queen", "Jack", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
+			new String[]{"Diamond", "Spade", "Clover", "Heart"},
+			new int[]{11, 10, 10, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+		);
+		System.out.println(deck);
+		System.out.println("\u2660");
 	}
 }
