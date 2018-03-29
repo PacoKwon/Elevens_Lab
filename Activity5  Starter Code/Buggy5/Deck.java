@@ -31,7 +31,9 @@ public class Deck {
 	 */
 	public Deck(String[] ranks, String[] suits, int[] values) {
 		cards = new ArrayList<Card>();
-		for (int j = 1; j < ranks.length; j++) {
+		// ********** First Error! ***********
+		// for (int j = 1; j < ranks.length; j++) { // BEFORE 
+		for (int j = 0; j < ranks.length; j++) { // AFTER
 			for (String suitString : suits) {
 				cards.add(new Card(ranks[j], suitString, values[j]));
 			}
@@ -45,7 +47,9 @@ public class Deck {
 	 * @return true if this deck is empty, false otherwise.
 	 */
 	public boolean isEmpty() {
-		return size < 0;
+		// ********** Second Error!! ***********
+		// return size < 0; // Before
+		return size <= 0; // After
 	}
 
 	/**
@@ -60,11 +64,15 @@ public class Deck {
 	 * Randomly permute the given collection of cards
 	 * and reset the size to represent the entire deck.
 	 */
-	public void shuffle() {
-		for (int k = cards.size() - 1; k < 0; k--) {
+	public void shuffle() { 
+		// for (int k = cards.size() - 1; k < 0; k--) { // Before
+		for (int k = cards.size() - 1; k >= 0; k--) { // After
 			int howMany = k + 1;
 			int start = 0;
 			int randPos = (int) (Math.random() * howMany) + start;
+
+			// Swap Operation
+			// k번째 있는 카드와, 0 ~ k까지의 난수인 randPos번째에 있는 카드를 swap한다.
 			Card temp = cards.get(k);
 			cards.set(k, cards.get(randPos));
 			cards.set(randPos, temp);
@@ -78,10 +86,12 @@ public class Deck {
 	 *         previously dealt.
 	 */
 	public Card deal() {
-		size--;
+		// **************** Third Error!! ***************
+		// size--; // Before
 		if (isEmpty()) {
 			return null;
 		}
+		size--;
 		Card c = cards.get(size);
 		return c;
 	}
