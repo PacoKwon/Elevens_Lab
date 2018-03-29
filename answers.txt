@@ -1,0 +1,19 @@
+Activity 5:
+* Buggy1:
+error message: isEmpty is false for an empty deck
+isEmpty 메서드가 정상적으로 작동하지 않는다. deck이 비어 있는 경우에도 false를 return하기 때문이다.
+
+possible code error:
+isEmpty는 deck이 비어 있을 때 true를 return해야 하는데, 그 조건문이 잘못되어 있을 가능성이 있다.
+
+* Buggy2:
+error message: Size is 0. It should be 1 for a 1-card deck.
+소스 코드에서는 d.size()를 test하고 있다. 이때 d.size()가 0을 return해서 error가 생기는 것이므로, Deck class의 size() 메서드가 잘못되어 있을 것이다.
+
+* Buggy3:
+error message: The sequence of cards in d1 and d2 are identical.
+이 error는 testShuffle() 메서드에서 생긴다. 이 메서드 맨 마지막 부분에 있는 allMatch의 값이 true여서 에러가 발생한다. Deck class의 constructor에서는 shuffle()을 호출을 하는데 shuffle을 한 뒤에는 allMatch의 값이 false이어야 하기 때문이다. 따라서 Deck class의 constructor에서 shuffle() 메서드를 호출하지 않거나, shuffle() 메서드가 잘못되어 있을 것이다.
+
+* Buggy4:
+error message: 1st dealt card is null for a 1-card deck.
+이 에러는 1장짜리 deck을 testing하는 testOneCard 메서드에서 발생하였다. 특히 앞선 assert 문장들에서 size가 1이고 비어있지 않다는 것도 확인이 되었다. 이때 에러는 1장 짜리 deck에서 deal을 하여 나온 카드가 null이라는 것이다. deal이 정상적으로 되었다면 카드가 유효한 객체여야 할 것이다. 따라서 Deck class의 deal() 메서드가 잘못되어 있을 것이다.

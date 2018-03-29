@@ -134,6 +134,8 @@ public class DeckTester {
 			Card c1 = d1.deal();
 			Card c2 = d2.deal();
 			if (!c1.matches(c2)) {
+				System.out.println(c1);
+				System.out.println(c2);
 				allMatch = false;
 			}
 		}
