@@ -88,3 +88,15 @@ Activity 7:
 
 	Consistent size of board, deck of removed cards, deck of new cards faced down.
 	BOARD_SIZE, SUITS, RANKS 
+
+
+Activity 9: 
+1) Size 메소드는 cards.Length, 즉, 보드 위에 있는 카드의 개수를 반환한다. ElevensBoard 와 ThirteenBoards에서 각각 9와 10의 숫자를 반환하는 것이 아니라, 두 보드에서 만들어진 cards array의 길이를 반환하는 것이다. cards[]는 Boards class에서 상속받은 멤버 변수이기 때문에, abstract method로 만들어서 ElevensBoard와 ThirteensBoard에서 realize 할 필요 없이 Boards 클래스에서 완성된 메소드로 바로 사용이 가능하다.
+
+2) Cards class는 게임을 할 때의 규칙과 관련된 것이 아니라 카드 자체의 조작과 관련된 클래스이기 때문에 GUIRunner class에서 이와 같은 조작을 한다. 또한, 카드를 replace, remove 등을 할 때는 보드 상에서 게임을 한다는 전제가 있기 때문에 이를 따로 Cards class에서 구현할 이유가 없다.
+
+3) 인터페이스는 abstract class와는 달리, 변수는 상수의 형태로만 가질 수 있고,  메소드의 경우, 메소드 바디 없이 헤더만 작성할 수 있기 때문에, new Game() , deal(), gameIsWon() 등의 메소드를 사용할 수 없으며, 따라서 ElevensBoard와 ThirteensBoard 각각에서 메소드를 완성시켜야 되기 때문에 실질적으로 인터페이스를 사용하는 것은 도움이 되지 않는다. isLegal()과 anotherPlayIsPossible()과 같은 메소드는 interface에서 만들어도 문제가 되지 않겠지만 realize된 다른 메소드를 사용 불가능하기 때문에 interface implement는 적합하지 않은 방식이다.  
+
+Activity 11:
+1) 
+
