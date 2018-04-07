@@ -96,6 +96,20 @@ Activity 7:
 3)
 아마도..
 
+4)
+a. When a new game starts.
++) dealmycards() -> put n (size of the board) cards on the board
+b. isLegal() anotherPlayisPossible()
+c. 01367
+d.
+public static printCard(ElevenBoard board) {
+	List<Integer> cIndexes = board.cardIndexes();
+	for (Integer i : cIndexes) {
+		System.out.println(this.cards[i]);
+	}
+}
+e. anotherPlayisPossible()
+
 Activity 9: 
 1) Size 메소드는 cards.Length, 즉, 보드 위에 있는 카드의 개수를 반환한다. ElevensBoard 와 ThirteenBoards에서 각각 9와 10의 숫자를 반환하는 것이 아니라, 두 보드에서 만들어진 cards array의 길이를 반환하는 것이다. cards[]는 Boards class에서 상속받은 멤버 변수이기 때문에, abstract method로 만들어서 ElevensBoard와 ThirteensBoard에서 realize 할 필요 없이 Boards 클래스에서 완성된 메소드로 바로 사용이 가능하다.
 
