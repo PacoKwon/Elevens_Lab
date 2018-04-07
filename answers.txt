@@ -110,6 +110,14 @@ public static printCard(ElevenBoard board) {
 }
 e. anotherPlayisPossible()
 
+Activity 8:
+1) Similarities: Standard card deck.
+   Differences: Different rules, size of card board, point values, odds of winning, and playing behaviors/algorithms/methods.
+2) The superclass Board defines the deck and gets called by the ElevensBoard object to be initialized via polymorphism.
+3) Abstract: Board, isLegal, anotherPlayIsPossible.
+Differences seem to be covered, Board has parameters (size, ranks, suits, pointValues) and isLegal/anotherPlayIsPossible is generic enough to be implemented differently in each invidual game. To the best of my understanding, it sufficently covers the differences between Elevens, Thirteens, and Tens.
+
+
 Activity 9: 
 1) Size 메소드는 cards.Length, 즉, 보드 위에 있는 카드의 개수를 반환한다. ElevensBoard 와 ThirteenBoards에서 각각 9와 10의 숫자를 반환하는 것이 아니라, 두 보드에서 만들어진 cards array의 길이를 반환하는 것이다. cards[]는 Boards class에서 상속받은 멤버 변수이기 때문에, abstract method로 만들어서 ElevensBoard와 ThirteensBoard에서 realize 할 필요 없이 Boards 클래스에서 완성된 메소드로 바로 사용이 가능하다.
 
