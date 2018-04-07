@@ -1,0 +1,102 @@
+Activity 2:
+	1) 덱은 카드의 배열을 멤버변수로 가진다.
+	2) 6개
+	3) ranks는 2~A까지 13개의 원소를 갖고 있어야한다
+	   suits는 spades, hearts, diamonds, clubs
+	   pointValue는 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11
+	4) suits의 순서는 상관이 없지만 ranks와 pointValues의 경우, ranks의 n번째 원소가 가지는
+	   점수가 pointValues의 n번째 원소여야한다.
+
+Activity 3:
+	1)
+	public static String flip() {
+		int p = (int)(Math.random() * 3);
+		if (p < 2) {
+			return "heads";
+		} else {
+			return "tails";
+		}
+	}
+
+	2)
+	public static boolean arePermutations(int[] a, int[] b) {
+		if (a.length != b.length) return false;
+
+		java.util.Arrays.sort(a);
+		java.util.Arrays.sort(b);
+
+		for (int i = 0; i < a.length; i++) {
+			if (a[i] != b[i]) return false;
+		}
+		return true;
+	}
+
+	3) 0,1,1
+  
+Activity 5:
+* Buggy1:
+error message: isEmpty is false for an empty deck
+isEmpty 메서드가 정상적으로 작동하지 않는다. deck이 비어 있는 경우에도 false를 return하기 때문이다.
+
+possible code error:
+isEmpty는 deck이 비어 있을 때 true를 return해야 하는데, 그 조건문이 잘못되어 있을 가능성이 있다.
+
+* Buggy2:
+error message: Size is 0. It should be 1 for a 1-card deck.
+소스 코드에서는 d.size()를 test하고 있다. 이때 d.size()가 0을 return해서 error가 생기는 것이므로, Deck class의 size() 메서드가 잘못되어 있을 것이다.
+
+* Buggy3:
+error message: The sequence of cards in d1 and d2 are identical.
+이 error는 testShuffle() 메서드에서 생긴다. 이 메서드 맨 마지막 부분에 있는 allMatch의 값이 true여서 에러가 발생한다. Deck class의 constructor에서는 shuffle()을 호출을 하는데 shuffle을 한 뒤에는 allMatch의 값이 false이어야 하기 때문이다. 따라서 Deck class의 constructor에서 shuffle() 메서드를 호출하지 않거나, shuffle() 메서드가 잘못되어 있을 것이다.
+
+* Buggy4:
+error message: 1st dealt card is null for a 1-card deck.
+이 에러는 1장짜리 deck을 testing하는 testOneCard 메서드에서 발생하였다. 특히 앞선 assert 문장들에서 size가 1이고 비어있지 않다는 것도 확인이 되었다. 이때 에러는 1장 짜리 deck에서 deal을 하여 나온 카드가 null이라는 것이다. deal이 정상적으로 되었다면 카드가 유효한 객체여야 할 것이다. 따라서 Deck class의 deal() 메서드가 잘못되어 있을 것이다.
+
+* Buggy5:
+error message 1: Initial size is 1. It should be 2. at DeckTester2.test2CardDeck(DeckTester.java:43)
+size가 2여야 하는데 다른 size가 return이 되었다는 뜻이므로, Deck class의 size method나 constructor가 잘못 구현되어 있을 것이다. constructor에서 deck을 initialize하는 과정에서 for loop을 이중으로 돌리는데, 첫 번째 for loop은 j가 1부터 시작하여 완전히 돌지 않는다는 것을 알 수 있다. 따라서 j를 0부터 시작하도록 코드를 수정한다.
+
+error message 2: isEmpty is false for an empty deck. at DeckTester.testEmpty(DeckTester.java:98)
+Deck이 비어 있는데 isEmpty가 false를 return하기 때문에, Deck class의 isEmpty() 메서드나, 이를 호출하는 메서드가 잘못되어 있을 것이다. isEmpty()를 봤을 때 size가 음수면 true를 return하도록 되어 있는데, 이는 0을 포함하지 않기 때문에 size가 0이어도 false를 return하는 것이다. 따라서 등호를 붙여주어야 한다.
+
+error message 3: 2nd card dealt is null. at DeckTester.test2CardDeck(DeckTester.java:57)
+카드가 하나 남아있는 상황에서 deal을 한 카드를 판별을 했을 때 결과값이 null이 나와서 에러가 발생하였다. 따라서 deal() 메서드를 살펴보아야 한다.
+Deck class의 deal 메서드는 우선 size를 하나 줄이고 isEmpty()가 참이면 null을 return하고, 아니면 Card 객체를 return하는 구조로 되어 있다. 이때 카드가 하나인 경우에는 size를 하나 줄이고 isEmpty()를 보면 비어 있다는 결과가 나올 것이다. 따라서 size를 줄이기 전에 isEmpty()를 판별하는 것이 이런 에러를 방지할 수 있을 것이다.
+
+error message 4: The sequence of cards in d1 and d2 are identical. at DeckTester.testShuffle(DeckTester.java:140)
+Deck 객체를 만들 때 생성자를 거치는데, 이때 생성자에서 shuffle() 메서드를 호출해준다는 사실을 알 수 있다. 이때 두 개의 객체를 만들면 두 deck은 모두 shuffle이 된 상태일 것이다. shuffle이 되어도 sequence가 같을 수 있지만, 에러가 항상 발생하기 때문에 shuffle() 메서드에 문제가 있을 것이다.
+shuffle() 메서드는 for loop을 사용하여 shuffle을 하고 있는데, k를 cards.size() - 1로 초기화한 뒤 이를 random한 카드와 swap을 하는 구조이다. 따라서 k는 cards.size() - 1부터 0까지 돌아야 하는데, 조건문이 k < 0이기 때문에 결국에는 반복문이 한 번도 돌지 않게 된다. 따라서 k >= 0으로 조건문을 수정해야 한다.
+
+이 4개의 에러를 모두 수정한 뒤에는 프로그램이 정상적으로 작동한다.
+
+Activity 6:
+1) List all possible plays for the board 5♠   4♥   2♦   6♣   A♠   J♥   K♦   5♣   2♠ 
+
+	(5♠,6♣), (5♣,6♣)
+
+2) If the deck is empty and the board has three cards left, must they be J, Q, and K? Why or why not? 
+
+	Since the deck consists of 52 cards and is removed by a pair at a time, cards with numbers can be removed perfectly (If possible).
+	Then the face cards are removed by three at a time, it is trivial that the remainding three will be face cards J, Q and K.
+
+3) No strategy. Since suits do not play a role in the game, it does not matter which one to remove first. The game go along only with luck.
+
+Activity 7:
+1) What items would be necessary if you were playing a game of Elevens at your desk (not on the computer)? 
+   List the private instance variables needed for the ElevensBoard class. 
+
+	Consistent size of board, deck of removed cards, deck of new cards faced down.
+	BOARD_SIZE, SUITS, RANKS 
+
+
+Activity 9: 
+1) Size 메소드는 cards.Length, 즉, 보드 위에 있는 카드의 개수를 반환한다. ElevensBoard 와 ThirteenBoards에서 각각 9와 10의 숫자를 반환하는 것이 아니라, 두 보드에서 만들어진 cards array의 길이를 반환하는 것이다. cards[]는 Boards class에서 상속받은 멤버 변수이기 때문에, abstract method로 만들어서 ElevensBoard와 ThirteensBoard에서 realize 할 필요 없이 Boards 클래스에서 완성된 메소드로 바로 사용이 가능하다.
+
+2) Cards class는 게임을 할 때의 규칙과 관련된 것이 아니라 카드 자체의 조작과 관련된 클래스이기 때문에 GUIRunner class에서 이와 같은 조작을 한다. 또한, 카드를 replace, remove 등을 할 때는 보드 상에서 게임을 한다는 전제가 있기 때문에 이를 따로 Cards class에서 구현할 이유가 없다.
+
+3) 인터페이스는 abstract class와는 달리, 변수는 상수의 형태로만 가질 수 있고,  메소드의 경우, 메소드 바디 없이 헤더만 작성할 수 있기 때문에, new Game() , deal(), gameIsWon() 등의 메소드를 사용할 수 없으며, 따라서 ElevensBoard와 ThirteensBoard 각각에서 메소드를 완성시켜야 되기 때문에 실질적으로 인터페이스를 사용하는 것은 도움이 되지 않는다. isLegal()과 anotherPlayIsPossible()과 같은 메소드는 interface에서 만들어도 문제가 되지 않겠지만 realize된 다른 메소드를 사용 불가능하기 때문에 interface implement는 적합하지 않은 방식이다.  
+
+Activity 11:
+1) 
+
