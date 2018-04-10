@@ -57,8 +57,8 @@ public class KlondikeBoard
         /** Initialize Deck */
         stock = new Deck(RANKS, SUITS, POINT_VALUES);
 
-        /** Initialize piles. The maximum size of a single pile is 13 (Ace to King) */
-        piles = new Card[BOARD_SIZE][13];
+        /** Initialize piles. The maximum size of a single pile is 19 (Ace to King) */
+        piles = new Card[BOARD_SIZE][20];
 
         /** Initilize foundations. The length of foundation is 4 and the maximum  */
         foundations = new Card[4][13];
@@ -112,7 +112,9 @@ public class KlondikeBoard
      * Evaluates if two selected cards are alternate in suit color and point value
      */
     private boolean isAlternated(List<CardInfo> selectedCards) {
+        /** 선택된 카드가 2개만 있으면. */
         if (selectedCards.size() == 2) {
+            /** 카드 두 개의 인스턴스를 빼온다. */
             CardInfo p1 = selectedCards.get(0);
             CardInfo p2 = selectedCards.get(1);
             
