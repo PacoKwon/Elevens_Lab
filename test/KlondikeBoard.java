@@ -194,9 +194,8 @@ public class KlondikeBoard
             if (p1.from().equals("piles") && p2.from().equals("piles")) {
                 c1 = piles[p1.rowNum()][p1.pos()];
                 c2 = piles[p2.rowNum()][p2.pos()];
-    
-                return (isBlack(c1) == isRed(c2) || isBlack(c2) == isRed(c1))
-                            && (c2.pointValue() + 1 == c1.pointValue());
+                return (isBlack(c1) != isBlack(c2)) && (c2.pointValue() + 1 == c1.pointValue())
+                                && isOrder(p2) && (p1.pos() == piles[p1.rowNum()].length - 1) ;
             }
             /** If one is from a pile and another is from a foundation */
             else if (p1.from().equals("piles") && p2.from().equals("foundations")) {
@@ -227,6 +226,24 @@ public class KlondikeBoard
         }
         return false;
     }
+    
+    /**
+     * It determines wheter a series of cards from a selected one to the bottom is in correct order or not
+     *@param c is the card which the series starts from
+     */
+    private boolean isOrder(CardInfo c){
+        int cRow = c.rowNum();
+        if(c.from().equals("piles")){
+            for(int seq = c.pos() + 1 ; seq < piles[cRow].length ; seq++){
+                if(piles[cRow][seq].pointValue() != piles[cRow][seq-1].pointValue() - 1)
+                    return false;
+                if(isBlack(piles[cRow][seq]) == isBlack(piles[cRow][seq-1]))
+                    return false;
+            }
+        }
+        return true;
+    }
+    
     /** 
      * It determines whether a suit is black or not
      * @param suit is the input Card object to be determined black or not
