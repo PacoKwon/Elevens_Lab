@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class KlondikeGUI extends JFrame implements ActionListener {
 
     /** Height of the game frame. */
-    private static final int DEFAULT_HEIGHT = 302;
+    private static final int DEFAULT_HEIGHT = 600;
     /** Width of the game frame. */
     private static final int DEFAULT_WIDTH = 800;
     /** Width of a card. */
@@ -92,8 +92,6 @@ public class KlondikeGUI extends JFrame implements ActionListener {
         totalWins = 0;
         totalGames = 0;
 
-        setBackground(Color.GREEN);
-        // setOpaque(true);
         // Initialize cardCoords using 5 cards per row
         cardCoords = new Point[board.size()];
         int x = LAYOUT_LEFT;
@@ -129,21 +127,21 @@ public class KlondikeGUI extends JFrame implements ActionListener {
      * Draw the display (cards and messages).
      */
     public void repaint() {
-        for (int k = 0; k < board.size(); k++) {
-            String cardImageFileName = imageFileName(board.cardAt(k), selections[k]);
-            URL imageURL = getClass().getResource(cardImageFileName);
-            if (imageURL != null) {
-                ImageIcon icon = new ImageIcon(imageURL);
-                displayCards[k].setIcon(icon);
-                displayCards[k].setVisible(true);
-            } else {
-                throw new RuntimeException("Card image not found: \"" + cardImageFileName + "\"");
-            }
-        }
-        statusMsg.setText(board.deckSize() + " undealt cards remain.");
-        statusMsg.setVisible(true);
-        totalsMsg.setText("You've won " + totalWins + " out of " + totalGames + " games.");
-        totalsMsg.setVisible(true);
+        // for (int k = 0; k < board.size(); k++) {
+        //     String cardImageFileName = imageFileName(board.cardAt(k), selections[k]);
+        //     URL imageURL = getClass().getResource(cardImageFileName);
+        //     if (imageURL != null) {
+        //         ImageIcon icon = new ImageIcon(imageURL);
+        //         displayCards[k].setIcon(icon);
+        //         displayCards[k].setVisible(true);
+        //     } else {
+        //         throw new RuntimeException("Card image not found: \"" + cardImageFileName + "\"");
+        //     }
+        // }
+        // statusMsg.setText(board.deckSize() + " undealt cards remain.");
+        // statusMsg.setVisible(true);
+        // totalsMsg.setText("You've won " + totalWins + " out of " + totalGames + " games.");
+        // totalsMsg.setVisible(true);
         pack();
         panel.repaint();
     }
@@ -158,19 +156,15 @@ public class KlondikeGUI extends JFrame implements ActionListener {
             }
         };
 
+        panel.setBackground(new Color(72, 178, 77));
         // If board object's class name follows the standard format
         // of ...Board or ...board, use the prefix for the JFrame title
-        String className = board.getClass().getSimpleName();
-        int classNameLen = className.length();
-        int boardLen = "Board".length();
-        String boardStr = className.substring(classNameLen - boardLen);
-        if (boardStr.equals("Board") || boardStr.equals("board")) {
-            int titleLength = classNameLen - boardLen;
-            setTitle(className.substring(0, titleLength));
-        }
 
+        setTitle("Klondike");
         // Calculate number of rows of cards (5 cards per row)
         // and adjust JFrame height if necessary
+        
+        
         int numCardRows = (board.size() + 4) / 5;
         int height = DEFAULT_HEIGHT;
         if (numCardRows > 2) {
@@ -180,6 +174,7 @@ public class KlondikeGUI extends JFrame implements ActionListener {
         this.setSize(new Dimension(DEFAULT_WIDTH, height));
         panel.setLayout(null);
         panel.setPreferredSize(new Dimension(DEFAULT_WIDTH - 20, height - 20));
+        /*
         displayCards = new JLabel[board.size()]; // make cards. number of cards will be equal to the size of the board
         for (int k = 0; k < board.size(); k++) {
             displayCards[k] = new JLabel();
@@ -188,6 +183,9 @@ public class KlondikeGUI extends JFrame implements ActionListener {
             displayCards[k].addMouseListener(new MyMouseListener());
             selections[k] = false; // initialize selections array to false
         }
+        */
+        
+        /*
         replaceButton = new JButton();
         replaceButton.setText("Replace");
         panel.add(replaceButton);
@@ -227,10 +225,11 @@ public class KlondikeGUI extends JFrame implements ActionListener {
         if (!board.anotherPlayIsPossible()) {
             signalLoss();
         }
-
+        */
         pack();
-        getContentPane().add(panel);
-        getRootPane().setDefaultButton(replaceButton);
+        getContentPane().add(panel); // equivalent to add(panel);
+        // getRootPane().setDefaultButton(replaceButton);
+        // */
         panel.setVisible(true);
     }
 

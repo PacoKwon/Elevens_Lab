@@ -1,3 +1,5 @@
+import java.net.URL;
+
 /**
  * This is a class that plays the GUI version of the Elevens game.
  * See accompanying documents for a description of how Elevens is played.
@@ -9,8 +11,9 @@ public class KlondikeGUIRunner {
      * @param args is not used.
      */
     public static void main(String[] args) {
-        Board board = new ElevensBoard();
-        KlondikeGUI gui = new KlondikeGUI(board);
+        // Board board = new ElevensBoard();
+        KlondikeBoard board = new KlondikeBoard();
+        KlondikeGUI2 gui = new KlondikeGUI2(board);
         gui.displayGame();
     }
 }

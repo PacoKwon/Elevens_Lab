@@ -92,6 +92,10 @@ public class KlondikeBoard
         this.stock.deal();
     }
 
+    public int size() {
+        return BOARD_SIZE;
+    }
+
     /**
      * Evaluates if a play is legal or not. 플레이가 가능한지 판별
      * In klondike every legal play is a 2-card selection. klondike에서는 플레이가 2장의 카드로 이루어지므로 다른 경우는 일단 고려 x

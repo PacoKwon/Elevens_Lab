@@ -129,8 +129,7 @@ public class CardGameGUI extends JFrame implements ActionListener {
 	 */
 	public void repaint() {
 		for (int k = 0; k < board.size(); k++) {
-			String cardImageFileName =
-				imageFileName(board.cardAt(k), selections[k]);
+			String cardImageFileName = imageFileName(board.cardAt(k), selections[k]);
 			URL imageURL = getClass().getResource(cardImageFileName);
 			if (imageURL != null) {
 				ImageIcon icon = new ImageIcon(imageURL);
@@ -257,7 +256,7 @@ public class CardGameGUI extends JFrame implements ActionListener {
 	private String imageFileName(Card c, boolean isSelected) {
 		String str = "cards/";
 		if (c == null) {
-			return "cards/back1.GIF";
+			return "cards/back.GIF";
 		}
 		str += c.rank() + c.suit();
 		if (isSelected) {
