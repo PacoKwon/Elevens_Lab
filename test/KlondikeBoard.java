@@ -27,7 +27,7 @@ public class KlondikeBoard
     /**
      * The piles on the board. There are BOARD_SIZE amount of piles on the board.
      */
-    private Card[][] piles;
+    public Card[][] piles;
 
     /**
      * The foundation on the top right part of the board.
@@ -58,16 +58,16 @@ public class KlondikeBoard
         stock = new Deck(RANKS, SUITS, POINT_VALUES);
 
         /** Initialize piles. The maximum size of a single pile is 13 (Ace to King) */
-        piles = new Card[BOARD_SIZE][13];
+        piles = new Card[BOARD_SIZE][20];
 
         /** Initilize foundations. The length of foundation is 4 and the maximum  */
         foundations = new Card[4][13];
 
         /** Initialize pile size */
-        pileSize = new int[13];
+        pileSize = new int[BOARD_SIZE];
 
         /** Initialize visible */
-        visible = new boolean[BOARD_SIZE][13];
+        visible = new boolean[BOARD_SIZE][20];
 
         /** Deal cards at start of game. */
         dealMyCards();
@@ -88,14 +88,41 @@ public class KlondikeBoard
         }
     }
 
+    /**
+     * deal a card.
+     */
     public void dealStock() {
         this.stock.deal();
     }
 
+    /**
+     * @return the number of piles on the board.
+     */
     public int size() {
         return BOARD_SIZE;
     }
 
+    public Card cardAt(int pile, int pos) {
+        /** pos is smaller than the size of pile */
+        if (pos < pileSize[pile]) {
+            return piles[pile][pos];
+        } else {
+            return null;
+        }
+    }
+
+    /** 
+     * There are BOARD_SIZE piles on the board.
+     * This method tells how many cards there are in a designated pile
+     * @param rowNum designated pile number
+     */
+    public int pileSize(int rowNum) {
+        return pileSize[rowNum];
+    }
+
+    public boolean isVisible(int pile, int pos) {
+        return this.visible[pile][pos];
+    }
     /**
      * Evaluates if a play is legal or not. 플레이가 가능한지 판별
      * In klondike every legal play is a 2-card selection. klondike에서는 플레이가 2장의 카드로 이루어지므로 다른 경우는 일단 고려 x
