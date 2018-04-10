@@ -22,7 +22,7 @@ public class KlondikeBoard
     /**
      * The single deck used on the board
      */
-    public Deck stock;
+    public Deck deck;
 
     /**
      * The piles on the board. There are BOARD_SIZE amount of piles on the board.
@@ -41,6 +41,11 @@ public class KlondikeBoard
      */
     private boolean[][] visible;
 
+    /** the size of remaining stock */
+    private int stockSize;
+
+    /** the size of foundations */
+    private int[] fSize;
     /**
      * there are BOARD_SIZE(usually 7) piles on the board.
      * pileSize manages the size of each pile.
@@ -55,7 +60,7 @@ public class KlondikeBoard
 
     public KlondikeBoard() {
         /** Initialize Deck */
-        stock = new Deck(RANKS, SUITS, POINT_VALUES);
+        deck = new Deck(RANKS, SUITS, POINT_VALUES);
 
         /** Initialize piles. The maximum size of a single pile is 13 (Ace to King) */
         piles = new Card[BOARD_SIZE][20];
@@ -65,6 +70,12 @@ public class KlondikeBoard
 
         /** Initialize pile size */
         pileSize = new int[BOARD_SIZE];
+
+        /** Size of stock */
+        stockSize = 52;
+
+        /** size of foundations */
+        fSize = new int[4];
 
         /** Initialize visible */
         visible = new boolean[BOARD_SIZE][20];
@@ -79,7 +90,8 @@ public class KlondikeBoard
             pileSize[i] = i + 1;
 
             for (int j = 0; j <= i; j++) {
-                piles[i][j] = stock.deal();
+                piles[i][j] = deck.deal();
+                stockSize--;
 
                 if (j == i) {
                     visible[i][j] = true;
@@ -91,8 +103,8 @@ public class KlondikeBoard
     /**
      * deal a card.
      */
-    public void dealStock() {
-        this.stock.deal();
+    public Card dealStock() {
+        return this.deck.deal();
     }
 
     /**
@@ -102,13 +114,27 @@ public class KlondikeBoard
         return BOARD_SIZE;
     }
 
-    public Card cardAt(int pile, int pos) {
+    public Card cardAtPiles(int pile, int pos) {
         /** pos is smaller than the size of pile */
         if (pos < pileSize[pile]) {
             return piles[pile][pos];
         } else {
             return null;
         }
+    }
+
+    public Card getFoundationTop(int which) {
+        if (fSize[which] > 0) {
+            return foundations[which][fSize[which] - 1];
+        } else {
+            return null;
+        }
+    }
+    /**
+     * @return total number of cards on the  (dealt + undealt)
+     */
+    public int stockSize() {
+        return this.stockSize;
     }
 
     /** 
@@ -120,6 +146,24 @@ public class KlondikeBoard
         return pileSize[rowNum];
     }
 
+    /**
+     * @return the top card of dealt cards in the remaining deck
+     */
+    public Card getStockTopCard() {
+
+        /** All cards are unflipped. Facing downwards */
+        if (stockSize() == deck.size()) {
+            return null;
+        } else {
+            return deck.getTop();
+        }
+    }
+    /**
+     * Evaluates if Card in piles[pile][pos] is visible or not
+     * @param pile the index of pile of card
+     * @param pos the position of card in a pile
+     * @return whether the card is set visible or not
+     */
     public boolean isVisible(int pile, int pos) {
         return this.visible[pile][pos];
     }
@@ -171,11 +215,11 @@ public class KlondikeBoard
                  */
                 return (c1.suit().equals(c2.suit()) && c2.pointValue() == c1.pointValue() + 1);
             }
-            /** stock to pile */
+            /**  to pile */
             else if (p1.from().equals("piles") && p2.from().equals("stock")) {
                 /** card from stock has to be lesser than that from piles */
                 c1 = piles[p1.rowNum()][p1.pos()];
-                c2 = stock.getTop();
+                c2 = deck.getTop();
 
                 /** suits are different in color and stock card's value is smaller than pile card's value by 1 */
                 return (isBlack(c1) == !isBlack(c2) && (c1.pointValue() == c2.pointValue() + 1));

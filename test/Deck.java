@@ -109,8 +109,8 @@ public class Deck {
 	}
 
 	/**
-	 * Get the top card of dealt deck
-	 * @return top card of dealt deck
+	 * Get the last card of dealt deck
+	 * @return last card of dealt deck
 	 */
 	public Card getTop() {
 		return cards.get(size);
