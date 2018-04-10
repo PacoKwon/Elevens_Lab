@@ -76,14 +76,14 @@ public class KlondikeBoard
     /** Deal cards at start of game. */
     private void dealMyCards() {
         for (int i = 0; i < piles.length; i++) {
-            /** 1번 줄에는 1개, 2번에는 2개... 7번에는 7개*/
+            /** 1번째는 카드 1개, 2번째는 2개, ... , 7번째는 7개*/
 
-            pileSize[i] = i + 1; // pileSize를 미리 설정해 둔다.
+            pileSize[i] = i + 1; // pileSize미리 초기화해 두기.
 
             for (int j = 0; j <= i; j++) {
                 piles[i][j] = stock.deal();
 
-                /** 마지막 카드는 사용자에게 보이기 때문에 */
+                /** i와 j가 같을 때는 pile에서 맨 위에 있으므로 visible을 true로 초기화. */
                 if (j == i) {
                     visible[i][j] = true;
                 }
@@ -96,8 +96,8 @@ public class KlondikeBoard
     }
 
     /**
-     * Evaluates if a play is legal or not. 플레이가 되는지 안 되는지 판별
-     * In klondike every legal play is a 2-card selection. klondike에서는 플레이가 두 장의 카드를 선택할 때밖에 없음. Elevens와는 달리 3장 고려 x
+     * Evaluates if a play is legal or not. 플레이가 가능한지 판별
+     * In klondike every legal play is a 2-card selection. klondike에서는 플레이가 2장의 카드로 이루어지므로 다른 경우는 일단 고려 x
      * @param selectedCards is a list of cards that determines if the selected card set is legal for playing
      */
     public boolean isLegal(List<CardInfo> selectedCards) {
@@ -140,7 +140,6 @@ public class KlondikeBoard
 
                 /** 
                  * suits are equal and pile card's value is bigger than foundation card's value by 1
-                 * suit가 동일하고 pile의 카드가 foundation의 카드
                  */
                 return (c1.suit().equals(c2.suit()) && c2.pointValue() == c1.pointValue() + 1);
             }
