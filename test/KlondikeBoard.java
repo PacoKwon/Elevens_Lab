@@ -57,8 +57,8 @@ public class KlondikeBoard
         /** Initialize Deck */
         stock = new Deck(RANKS, SUITS, POINT_VALUES);
 
-        /** Initialize piles. The maximum size of a single pile is 19 (Ace to King) */
-        piles = new Card[BOARD_SIZE][20];
+        /** Initialize piles. The maximum size of a single pile is 13 (Ace to King) */
+        piles = new Card[BOARD_SIZE][13];
 
         /** Initilize foundations. The length of foundation is 4 and the maximum  */
         foundations = new Card[4][13];
@@ -76,14 +76,11 @@ public class KlondikeBoard
     /** Deal cards at start of game. */
     private void dealMyCards() {
         for (int i = 0; i < piles.length; i++) {
-            /** 1¹øÂ°´Â Ä«µå 1°³, 2¹øÂ°´Â 2°³, ... , 7¹øÂ°´Â 7°³*/
-
-            pileSize[i] = i + 1; // pileSize¹Ì¸® ÃÊ±âÈ­ÇØ µÎ±â.
+            pileSize[i] = i + 1;
 
             for (int j = 0; j <= i; j++) {
                 piles[i][j] = stock.deal();
 
-                /** i¿Í j°¡ °°À» ¶§´Â pile¿¡¼­ ¸Ç À§¿¡ ÀÖÀ¸¹Ç·Î visibleÀ» true·Î ÃÊ±âÈ­. */
                 if (j == i) {
                     visible[i][j] = true;
                 }
@@ -91,13 +88,13 @@ public class KlondikeBoard
         }
     }
 
-    private void dealStock() {
-
+    public void dealStock() {
+        this.stock.deal();
     }
 
     /**
-     * Evaluates if a play is legal or not. ÇÃ·¹ÀÌ°¡ °¡´ÉÇÑÁö ÆÇº°
-     * In klondike every legal play is a 2-card selection. klondike¿¡¼­´Â ÇÃ·¹ÀÌ°¡ 2ÀåÀÇ Ä«µå·Î ÀÌ·ç¾îÁö¹Ç·Î ´Ù¸¥ °æ¿ì´Â ÀÏ´Ü °í·Á x
+     * Evaluates if a play is legal or not. í”Œë ˆì´ê°€ ê°€ëŠ¥í•œì§€ íŒë³„
+     * In klondike every legal play is a 2-card selection. klondikeì—ì„œëŠ” í”Œë ˆì´ê°€ 2ìž¥ì˜ ì¹´ë“œë¡œ ì´ë£¨ì–´ì§€ë¯€ë¡œ ë‹¤ë¥¸ ê²½ìš°ëŠ” ì¼ë‹¨ ê³ ë ¤ x
      * @param selectedCards is a list of cards that determines if the selected card set is legal for playing
      */
     public boolean isLegal(List<CardInfo> selectedCards) {
@@ -112,9 +109,7 @@ public class KlondikeBoard
      * Evaluates if two selected cards are alternate in suit color and point value
      */
     private boolean isAlternated(List<CardInfo> selectedCards) {
-        /** ¼±ÅÃµÈ Ä«µå°¡ 2°³¸¸ ÀÖÀ¸¸é. */
         if (selectedCards.size() == 2) {
-            /** Ä«µå µÎ °³ÀÇ ÀÎ½ºÅÏ½º¸¦ »©¿Â´Ù. */
             CardInfo p1 = selectedCards.get(0);
             CardInfo p2 = selectedCards.get(1);
             
@@ -128,15 +123,15 @@ public class KlondikeBoard
                 return (isBlack(c1) == isRed(c2) || isBlack(c2) == isRed(c1))
                             && (c2.pointValue() + 1 == c1.pointValue());
             }
-            /** Foundations¿¡¼­ pilesÀ¸·Î. If one is from a pile and another is from a foundation */
+            /** If one is from a pile and another is from a foundation */
             else if (p1.from().equals("piles") && p2.from().equals("foundations")) {
                 c1 = piles[p1.rowNum()][p1.pos()];
                 c2 = foundations[p2.rowNum()][p2.pos()];
                 
                 return (isBlack(c1) == !isBlack(c2) && c1.pointValue() == c2.pointValue() + 1);
             }
-            /** Piles¿¡¼­ foundationsÀ¸·Î. If one is from a pile and another is from a foundation */
-            else if (p1.from().equals("foundations") && p2.from().equals("piles")) {
+            else if (p1.from().equals("foundations") && p2.from().equals("piles"))
+            {
                 c1 = foundations[p1.rowNum()][p1.pos()];
                 c2 = piles[p2.rowNum()][p2.pos()];
 

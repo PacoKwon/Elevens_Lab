@@ -37,7 +37,7 @@ public class Deck {
 			}
 		}
 		size = cards.size();
-		// shuffle();
+		shuffle();
 	}
 
 
@@ -109,11 +109,11 @@ public class Deck {
 	}
 
 	/**
-	 * Get the top card of undealt deck
-	 * @return top card of undealt deck
+	 * Get the top card of dealt deck
+	 * @return top card of dealt deck
 	 */
 	public Card getTop() {
-		return cards.get(size - 1);
+		return cards.get(size);
 	}
 
 	/**
