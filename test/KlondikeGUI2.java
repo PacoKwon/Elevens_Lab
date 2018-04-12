@@ -67,7 +67,7 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
     /** is true if topCard is selected */
     private boolean topCardSelected;
     /** The card displays */
-    private JLabel[][] displayCards;
+    public JLabel[][] displayCards;
     /** The foundations on the top right side */
     private JLabel[] foundations;
     /** is true of foundation top card is selected */
@@ -76,6 +76,7 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
     private Point[][] cardCoords;
     /** kth element is true iff the user has selected card #k. */
     private boolean[][] selections;
+    private ArrayList<CardInfo> selectedCards;
 
     public KlondikeGUI2(KlondikeBoard gameBoard) {
         board = gameBoard;
@@ -91,7 +92,14 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
             foundations[i] = new JLabel();
         }
 
+        /** 
+         * Initialize selections variable 
+         * --> two-dimensional boolean array containing
+         * whether a card is selected or not
+         */
         selections = new boolean[board.size()][20];
+        /** Initialize selectedCards variable --> arraylist containing information of cards selected */
+        selectedCards = new ArrayList<CardInfo>();
 
         cardCoords = new Point[board.size()][20];
         int x = LAYOUT_LEFT;
@@ -128,8 +136,14 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
     }
     
     public void repaint() {
+        System.out.println(selectedCards);
         /** Board Paint */
         for (int i = 0; i < board.size(); i++) {
+            // if (board.pileSize(i) == 0) {
+            //     System.out.println(displayCards[i][0]);
+            //     displayCards[i][0].setIcon(new ImageIcon(getClass().getResource("cards/none.GIF")));
+            //     displayCards[i][0].setVisible(true);
+            // }
             for (int j = 0; j < board.pileSize(i); j++) {
                 String cardImageFileName = imageFileName(board.cardAtPiles(i, j), selections[i][j], board.isVisible(i, j));
                 URL imageURL = getClass().getResource(cardImageFileName);
@@ -154,6 +168,7 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
             stock.setIcon(icon);
             stock.setVisible(true);
         }
+
         /** Topcard Paint */
         String topCardName = imageFileName(board.getStockTopCard(), topCardSelected, true);
         System.out.println(topCardName);
@@ -228,10 +243,11 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
         panel.add(stock);
         stock.setBounds(LAYOUT_LEFT, STOCK_TOP, CARD_WIDTH, CARD_HEIGHT);
         stock.addMouseListener(new MyMouseListener());
-
+        
         /** Add topCard */
         panel.add(topCard);
         topCard.setBounds(LAYOUT_LEFT + LAYOUT_WIDTH_INC, STOCK_TOP, CARD_WIDTH, CARD_HEIGHT);
+        topCard.addMouseListener(new MyMouseListener());
 
         /** Add foundations */
         for (int i = 0; i < FOUNDATION_COUNT; i++) {
@@ -242,9 +258,14 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
 
         /** Add displayCards */
         displayCards = new JLabel[board.size()][20];
+
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = 0; j < 20; j++) {
+                displayCards[i][j] = new JLabel();
+            }
+        }
         for (int i = board.size() - 1; i >= 0; i--) {
             for (int j = board.pileSize(i) - 1; j >= 0; j--) {
-                displayCards[i][j] = new JLabel();
                 panel.add(displayCards[i][j]);
                 displayCards[i][j].setBounds(cardCoords[i][j].x, cardCoords[i][j].y, CARD_WIDTH, CARD_HEIGHT);
                 displayCards[i][j].addMouseListener(new MyMouseListener());
@@ -274,6 +295,10 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
     private class MyMouseListener implements MouseListener, MouseMotionListener {
         public void mouseClicked(MouseEvent e) {
             if (e.getSource().equals(stock)) {
+                /** when stock is clicked and topCard is selected, set it to false. */
+                if (topCardSelected) {
+                    topCardSelected = !topCardSelected;
+                }
                 /** when clicked and deck is empty, stack stock. repaint, and return without dealing */
                 if (board.deck.size() == 0) {
                     board.deck.stack(board.stockSize());
@@ -288,13 +313,38 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
                 repaint();
                 return;
             }
+            /** When Topcard is clicked */
+            if (e.getSource().equals(topCard)) {
+                if (board.getStockTopCard() != null) {
+                    CardInfo info = new CardInfo("stock");
+                    topCardSelected = !topCardSelected;
 
+                    if (topCardSelected){
+                        selectedCards.add(info);
+                    } else {
+                        selectedCards.remove(info);
+                    }
+
+                    repaint();
+                    return;
+                }
+            }
             /** Traverse Every Card on the board and find which one is clicked */
             for (int i = 0; i < board.size(); i++) {
                 for (int j = 0; j < board.pileSize(i); j++) {
                     if (e.getSource().equals(displayCards[i][j]) && board.cardAtPiles(i, j) != null) {
+                        CardInfo info = new CardInfo(i, j, "piles");
                         selections[i][j] = !selections[i][j];
-                        // System.out.printf("Card %s Clicked!!\n", board.cardAtPiles(i, j));
+                        
+                        if (selections[i][j]) {
+                            /** Card is selected right now */
+                            selectedCards.add(info);
+                        } else {
+                            /** Card is not selected right now */
+                            selectedCards.remove(info);
+                        }
+                        
+                        System.out.printf("Card %s Clicked!!\n", board.cardAtPiles(i, j));
                         // System.out.printf("Location: [%d, %d]\n", ((JLabel)e.getSource()).getLocation().x, ((JLabel)e.getSource()).getLocation().y);
                         repaint();
                         return;

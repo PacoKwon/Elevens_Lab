@@ -13,8 +13,16 @@ public class KlondikeGUIRunner {
         KlondikeBoard board = new KlondikeBoard();
         KlondikeGUI2 gui = new KlondikeGUI2(board);
         gui.displayGame();
-        System.out.println(board.stockSize());
-        System.out.println(board.deck.size());
+
+        // for (int i = 0; i < gui.displayCards.length; i++) {
+        //     System.out.println(gui.displayCards[i].length);
+        //     for (int j = 0; j < gui.displayCards[i].length; j++) {
+        //         System.out.println(gui.displayCards[i][j]);
+        //     }
+        // }
+        
+        // System.out.println(board.stockSize());
+        // System.out.println(board.deck.size());
         // gui.showCoords();
 
         // for (int i = 0; i < board.size(); i++) {

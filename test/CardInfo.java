@@ -11,6 +11,9 @@ class CardInfo
      */
     private String from;
 
+    public CardInfo(String _from) {
+        this(0, 0, _from);
+    }
     public CardInfo(int _rowNum, int _pos, String _from) {
         this.rowNum = _rowNum;
         this.pos = _pos;
@@ -38,5 +41,11 @@ class CardInfo
         }
 
         return false;
+    }
+    
+    @Override
+    public String toString() {
+        String ret = String.format("Card from \"%s\": [rowNum: %d, pos: %d]", from, rowNum, pos);
+        return ret;
     }
 }

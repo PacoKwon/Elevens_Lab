@@ -256,7 +256,7 @@ public class KlondikeBoard
             return false;
         }
     }
-    
+
     /** 
      * It determines whether a suit is red or not
      * @param suit is the input Card object to be determined red or not
