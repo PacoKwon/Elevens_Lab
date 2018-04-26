@@ -140,9 +140,11 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
         /** Board Paint */
         for (int i = 0; i < board.size(); i++) {
             // if (board.pileSize(i) == 0) {
+            //     System.out.println(i);
             //     System.out.println(displayCards[i][0]);
             //     displayCards[i][0].setIcon(new ImageIcon(getClass().getResource("cards/none.GIF")));
             //     displayCards[i][0].setVisible(true);
+            //     continue;
             // }
             for (int j = 0; j < board.pileSize(i); j++) {
                 String cardImageFileName = imageFileName(board.cardAtPiles(i, j), selections[i][j], board.isVisible(i, j));
@@ -157,6 +159,9 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
                 }
             }
         }
+
+        displayCards[0][0].setIcon(new ImageIcon(getClass().getResource("cards/none.GIF")));
+        displayCards[0][0].setVisible(true);
 
         /** Stock Paint */
         URL stockURL = getClass().getResource("cards/back.GIF");
@@ -316,7 +321,7 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
             /** When Topcard is clicked */
             if (e.getSource().equals(topCard)) {
                 if (board.getStockTopCard() != null) {
-                    CardInfo info = new CardInfo("stock");
+                    CardInfo info = new CardInfo(CardInfo.STOCK);
                     topCardSelected = !topCardSelected;
 
                     if (topCardSelected){
@@ -333,7 +338,7 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
             for (int i = 0; i < board.size(); i++) {
                 for (int j = 0; j < board.pileSize(i); j++) {
                     if (e.getSource().equals(displayCards[i][j]) && board.cardAtPiles(i, j) != null) {
-                        CardInfo info = new CardInfo(i, j, "piles");
+                        CardInfo info = new CardInfo(i, j, CardInfo.PILES);
                         selections[i][j] = !selections[i][j];
                         
                         if (selections[i][j]) {
@@ -344,7 +349,7 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
                             selectedCards.remove(info);
                         }
                         
-                        System.out.printf("Card %s Clicked!!\n", board.cardAtPiles(i, j));
+                        // System.out.printf("Card %s Clicked!!\n", board.cardAtPiles(i, j));
                         // System.out.printf("Location: [%d, %d]\n", ((JLabel)e.getSource()).getLocation().x, ((JLabel)e.getSource()).getLocation().y);
                         repaint();
                         return;

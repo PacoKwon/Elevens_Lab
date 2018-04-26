@@ -1,20 +1,24 @@
 class CardInfo
 {
+    public static int FOUNDATIONS = 0;
+    public static int STOCK = 1;
+    public static int PILES = 2;
+
     /** the pile a card belongs to */
     private int rowNum;
     /** the position of a card in a pile or a foundation */
     private int pos;
     /** where the card belongs to. It can only be one of: 
-     * "foundations", 
-     * "stock",
-     * "piles".
+     * 0: foundations, 
+     * 1: stock,
+     * 2: piles.
      */
-    private String from;
+    private int from;
 
-    public CardInfo(String _from) {
+    public CardInfo(int _from) {
         this(0, 0, _from);
     }
-    public CardInfo(int _rowNum, int _pos, String _from) {
+    public CardInfo(int _rowNum, int _pos, int _from) {
         this.rowNum = _rowNum;
         this.pos = _pos;
         this.from = _from;
@@ -28,7 +32,7 @@ class CardInfo
         return pos;
     }
 
-    public String from() {
+    public int from() {
         return from;
     }
 
@@ -37,7 +41,7 @@ class CardInfo
         if (obj != null && obj instanceof CardInfo) {
             CardInfo other = (CardInfo)obj;
 
-            return (this.rowNum == other.rowNum() && this.pos == other.pos() && this.from.equals(other.from()));
+            return (this.rowNum == other.rowNum() && this.pos == other.pos() && this.from == other.from);
         }
 
         return false;
@@ -45,7 +49,8 @@ class CardInfo
     
     @Override
     public String toString() {
-        String ret = String.format("Card from \"%s\": [rowNum: %d, pos: %d]", from, rowNum, pos);
+        String[] fromArr = {"Foundations", "Stock", "Piles"};
+        String ret = String.format("Card from \"%s\": [rowNum: %d, pos: %d]", fromArr[from], rowNum, pos);
         return ret;
     }
 }
