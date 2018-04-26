@@ -3,6 +3,8 @@ class CardInfo
     public static int FOUNDATIONS = 0;
     public static int STOCK = 1;
     public static int PILES = 2;
+    public static int EMPTY_PILE = 3;
+    public static int EMPTY_FOUNDATION = 4;
 
     /** the pile a card belongs to */
     private int rowNum;
@@ -11,7 +13,9 @@ class CardInfo
     /** where the card belongs to. It can only be one of: 
      * 0: foundations, 
      * 1: stock,
-     * 2: piles.
+     * 2: piles,
+     * 3: emptyPile
+     * 4: empty Foundation
      */
     private int from;
 
