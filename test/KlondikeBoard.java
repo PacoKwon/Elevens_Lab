@@ -187,7 +187,7 @@ public class KlondikeBoard
         if (selectedCards.size() == 2) {
             CardInfo p1 = selectedCards.get(0);
             CardInfo p2 = selectedCards.get(1);
-            
+            //move from c2 to c1
             Card c1, c2;
 
             /** Piles to Piles. If both cards are from a pile */
@@ -195,15 +195,17 @@ public class KlondikeBoard
                 c1 = piles[p1.rowNum()][p1.pos()];
                 c2 = piles[p2.rowNum()][p2.pos()];
                 return (isBlack(c1) != isBlack(c2)) && (c2.pointValue() + 1 == c1.pointValue())
-                                && isOrder(p2) && (p1.pos() == piles[p1.rowNum()].length - 1) ;
+                                && isOrder(p2) && isLast(p1) ;
             }
-            /** If one is from a pile and another is from a foundation */
+            // If one is from a pile and another is from a foundation. foundation to pile
             else if (p1.from().equals("piles") && p2.from().equals("foundations")) {
                 c1 = piles[p1.rowNum()][p1.pos()];
                 c2 = foundations[p2.rowNum()][p2.pos()];
                 
                 return (isBlack(c1) == !isBlack(c2) && c1.pointValue() == c2.pointValue() + 1);
             }
+
+            //pile to foundation
             else if (p1.from().equals("foundations") && p2.from().equals("piles"))
             {
                 c1 = foundations[p1.rowNum()][p1.pos()];
@@ -212,16 +214,18 @@ public class KlondikeBoard
                 /** 
                  * suits are equal and pile card's value is bigger than foundation card's value by 1
                  */
-                return (c1.suit().equals(c2.suit()) && c2.pointValue() == c1.pointValue() + 1);
+                return (c1.suit().equals(c2.suit()) && c2.pointValue() == c1.pointValue() + 1
+                                    && isLast(p1));
             }
-            /**  to pile */
+            // stock to pile 
             else if (p1.from().equals("piles") && p2.from().equals("stock")) {
                 /** card from stock has to be lesser than that from piles */
                 c1 = piles[p1.rowNum()][p1.pos()];
                 c2 = deck.getTop();
 
                 /** suits are different in color and stock card's value is smaller than pile card's value by 1 */
-                return (isBlack(c1) == !isBlack(c2) && (c1.pointValue() == c2.pointValue() + 1));
+                return (isBlack(c1) == !isBlack(c2) && (c1.pointValue() == c2.pointValue() + 1)
+                                    && isLast(p1));
             }
         }
         return false;
@@ -243,7 +247,13 @@ public class KlondikeBoard
         }
         return true;
     }
-    
+    /**
+     * It determines whether a selected card is the last card at the pile or not
+     * @param c is the selected card
+     */
+    private boolean isLast(Card c) {
+        return (c.from.equals("piles") && c.pos() == piles[c.rowNum()].length -1 );
+    }
     /** 
      * It determines whether a suit is black or not
      * @param suit is the input Card object to be determined black or not
