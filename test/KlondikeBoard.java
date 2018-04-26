@@ -87,7 +87,7 @@ public class KlondikeBoard
     /** Deal cards at start of game. */
     private void dealMyCards() {
         for (int i = 0; i < piles.length; i++) {
-            pileSize[i] = i + 1;
+            pileSize[i] = i  + 1;
 
             for (int j = 0; j <= i; j++) {
                 piles[i][j] = deck.deal();
@@ -191,20 +191,20 @@ public class KlondikeBoard
             Card c1, c2;
 
             /** Piles to Piles. If both cards are from a pile */
-            if (p1.from().equals("piles") && p2.from().equals("piles")) {
+            if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.PILES) {
                 c1 = piles[p1.rowNum()][p1.pos()];
                 c2 = piles[p2.rowNum()][p2.pos()];
                 return (isBlack(c1) != isBlack(c2)) && (c2.pointValue() + 1 == c1.pointValue())
                                 && isOrder(p2) && (p1.pos() == piles[p1.rowNum()].length - 1) ;
             }
             /** If one is from a pile and another is from a foundation */
-            else if (p1.from().equals("piles") && p2.from().equals("foundations")) {
+            else if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.FOUNDATIONS) {
                 c1 = piles[p1.rowNum()][p1.pos()];
                 c2 = foundations[p2.rowNum()][p2.pos()];
                 
                 return (isBlack(c1) == !isBlack(c2) && c1.pointValue() == c2.pointValue() + 1);
             }
-            else if (p1.from().equals("foundations") && p2.from().equals("piles"))
+            else if (p1.from() == CardInfo.FOUNDATIONS && p2.from() == CardInfo.PILES)
             {
                 c1 = foundations[p1.rowNum()][p1.pos()];
                 c2 = piles[p2.rowNum()][p2.pos()];
@@ -215,7 +215,7 @@ public class KlondikeBoard
                 return (c1.suit().equals(c2.suit()) && c2.pointValue() == c1.pointValue() + 1);
             }
             /**  to pile */
-            else if (p1.from().equals("piles") && p2.from().equals("stock")) {
+            else if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.STOCK) {
                 /** card from stock has to be lesser than that from piles */
                 c1 = piles[p1.rowNum()][p1.pos()];
                 c2 = deck.getTop();
@@ -233,7 +233,7 @@ public class KlondikeBoard
      */
     private boolean isOrder(CardInfo c){
         int cRow = c.rowNum();
-        if(c.from().equals("piles")){
+        if(c.from() == CardInfo.PILES){
             for(int seq = c.pos() + 1 ; seq < piles[cRow].length ; seq++){
                 if(piles[cRow][seq].pointValue() != piles[cRow][seq-1].pointValue() - 1)
                     return false;
