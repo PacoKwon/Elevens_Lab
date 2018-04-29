@@ -89,9 +89,12 @@ Activity 7:
 	Consistent size of board, deck of removed cards, deck of new cards faced down.
 	BOARD_SIZE, SUITS, RANKS 
 2) 
-2개 선택하면 더해서 11인지 확인
-3개 선택하면 셋 다 각각 JQK인지 확인
-게임을 계속 할 수 있는지 확인, game over인지 판단
+do{
+	if(!(c1.pointValue+c2.pointValue==11 || c1.pointValue+c2.pointValue+c3.pointValue==36 && c1.pointValue!=c2.pointValue))continue;
+	deal();
+	if(!gameContinue) gameOver=true;	
+}while(!gameOver);
+
 
 3)
 아마도..
