@@ -65,7 +65,8 @@ public class Deck {
 	 * and reset the size to represent the entire deck.
 	 */
 	public void shuffle() { 
-		// for (int k = cards.size() - 1; k < 0; k--) { // Before
+		// ********** Fourth Error!! ***********
+		// for (int k = cards.size() - 1; k < 0; k--) { // Before. Does not iterate.
 		for (int k = cards.size() - 1; k >= 0; k--) { // After
 			int howMany = k + 1;
 			int start = 0;
@@ -87,11 +88,12 @@ public class Deck {
 	 */
 	public Card deal() {
 		// **************** Third Error!! ***************
-		// size--; // Before
+		// size--;
+		// 여기에서 감소를 시키면 카드가 한 장 있어도 isEmpty()가 true가 된다.
 		if (isEmpty()) {
 			return null;
 		}
-		size--;
+		size--; // After. 따라서 여기서 감소를 시킨다.
 		Card c = cards.get(size);
 		return c;
 	}

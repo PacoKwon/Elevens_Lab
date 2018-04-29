@@ -107,13 +107,11 @@ public class DeckTester {
 	 * @param intended is the card that the one-card deck should contain.
 	 */
 	private static void testOneCard(Deck d, Card intended) {
-		assert d.size() == 1 : "Size is " + d.size()
-			+ ". It should be 1 for a 1-card deck.";
+		assert d.size() == 1 : "Size is " + d.size() + ". It should be 1 for a 1-card deck.";
 		assert !d.isEmpty() : "isEmpty true for a 1-card deck.";
 		Card c = d.deal();
 		assert c != null : "1st dealt card is null for a 1-card deck.";
-		assert c.matches(intended) : "1st card dealt for a 1-card deck is "
-			+ c + ". It should be " + intended + ".";
+		assert c.matches(intended) : "1st card dealt for a 1-card deck is " + c + ". It should be " + intended + ".";
 	}
 
 	/**
