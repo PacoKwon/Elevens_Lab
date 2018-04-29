@@ -100,7 +100,7 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
         selections = new boolean[board.size()][20];
         /** Initialize selectedCards variable --> arraylist containing information of cards selected */
         selectedCards = new ArrayList<CardInfo>();
-
+        fSelected = new boolean[FOUNDATION_COUNT];
         cardCoords = new Point[board.size()][20];
         int x = LAYOUT_LEFT;
         int y = PILES_TOP;
@@ -294,31 +294,53 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
         }
     }
     public void actionPerformed(ActionEvent e) {
+        //if actButtion clicked after the cards selected
+        if(e.getSource().equals(actButton)) {
+            if(board.isLegal(selectedCards)) {
+                //to be implemented
+                return;
+            }
+            else {
+                //deselect the card
+                selectedCards = new ArrayList<CardInfo>();
+                selections = new boolean[board.size()][20];
+                fSelected = new boolean[FOUNDATION_COUNT];
+                signalError();
+                return;
+            }
 
+        }
+        else if(e.getSource().equals(restartButton)) {
+            //restart the game
+        }
+        else {
+            signalError();
+            return;
+        }
     }
 
     private class MyMouseListener implements MouseListener, MouseMotionListener {
         public void mouseClicked(MouseEvent e) {
             if (e.getSource().equals(stock)) {
-                /** when stock is clicked and topCard is selected, set it to false. */
+                // when stock is clicked and topCard is selected, set it to false. 
                 if (topCardSelected) {
                     topCardSelected = !topCardSelected;
                 }
-                /** when clicked and deck is empty, stack stock. repaint, and return without dealing */
+                // when clicked and deck is empty, stack stock. repaint, and return without dealing 
                 if (board.deck.size() == 0) {
                     board.deck.stack(board.stockSize());
                     repaint();
                     return;
                 }
 
-                /** When clicked and deck is not empty, just deal another card from the deck */
+                // When clicked and deck is not empty, just deal another card from the deck 
                 System.out.println(board.dealStock());
                 System.out.println(board.stockSize());
                 System.out.println(board.deck.size());
                 repaint();
                 return;
             }
-            /** When Topcard is clicked */
+            // When Topcard is clicked 
             if (e.getSource().equals(topCard)) {
                 if (board.getStockTopCard() != null) {
                     CardInfo info = new CardInfo(CardInfo.STOCK);
@@ -334,7 +356,21 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
                     return;
                 }
             }
-            /** Traverse Every Card on the board and find which one is clicked */
+            // Traverse the foundation and find which one is clicked
+            for(int i = 0 ; i < FOUNDATION_COUNT ; i++) {
+                if (e. getSource().equals(foundations[i]) && board.getFoundationTop(i) != null) {
+                    CardInfo info = new CardInfo(i, /*뭐들어가야되지*/, CardInfo.FOUNDATIONS);
+                    fSelected[i] != fSelected[i];
+
+                    if(fSelected[i])
+                        selectedCards.add(info);
+                    else
+                        selectedCards.remove(info);
+                    repaint();
+                    return;
+                }
+            }
+            // Traverse Every Card on the board and find which one is clicked
             for (int i = 0; i < board.size(); i++) {
                 for (int j = 0; j < board.pileSize(i); j++) {
                     if (e.getSource().equals(displayCards[i][j]) && board.cardAtPiles(i, j) != null) {

@@ -12,5 +12,8 @@ public class ThirteensGUIRunner {
 		Board board = new ThirteensBoard();
 		CardGameGUI gui = new CardGameGUI(board);
 		gui.displayGame();
+
+
+		Board board = new Board();
 	}
 }
