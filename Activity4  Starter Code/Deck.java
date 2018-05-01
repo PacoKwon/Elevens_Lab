@@ -62,9 +62,12 @@ public class Deck {
 	 * and reset the size to represent the entire deck.
 	 */
 	public void shuffle() {
+		// for k = 51 down to 1
 		for (int k = size - 1; k >= 1; k--) {
+			// generate a random integer r between 0 and k, inclusive
 			int r = (int) (Math.random() * k);
 
+			// exchange cards[k] and cards
 			Card tmp = cards.get(r);
 			cards.set(r, cards.get(k));
 			cards.set(k, tmp);
@@ -120,4 +123,3 @@ public class Deck {
 		return rtn;
 	}
 }
-// dd

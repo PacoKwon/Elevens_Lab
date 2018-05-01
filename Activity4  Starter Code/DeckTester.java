@@ -8,11 +8,11 @@ public class DeckTester {
 	 *	@param args is not used.
 	 */
 	public static void main(String[] args) {
-		String[] ranks = {"jack", "queen", "king"};
-		String[] suits = {"blue", "red"};
-		int[] pointValues = {11, 12, 13};
+		String[] ranks = { "ace", "2", "3", "4"};
+		String[] suits = { "spades", "hearts" };
+		int[] pointValues = { 1, 2, 3, 4 };
 		Deck d = new Deck(ranks, suits, pointValues);
-
+		/*
 		System.out.println("**** Original Deck Methods ****");
 		System.out.println("  toString:\n" + d.toString());
 		System.out.println("  isEmpty: " + d.isEmpty());
@@ -33,7 +33,7 @@ public class DeckTester {
 		System.out.println();
 
 		System.out.println("**** Deal Remaining 5 Cards ****");
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 7; i++) {
 			System.out.println("  deal: " + d.deal());
 		}
 		System.out.println();
@@ -50,14 +50,17 @@ public class DeckTester {
 		System.out.println("  deal: " + d.deal());
 		System.out.println();
 		System.out.println();
-
-		/* *** TO BE COMPLETED IN ACTIVITY 4 *** */
-		Deck deck = new Deck(
-			new String[]{"Ace", "King", "Queen", "Jack", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
-			new String[]{"Diamond", "Spade", "Clover", "Heart"},
-			new int[]{11, 10, 10, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-		);
-		System.out.println(deck);
-		System.out.println("\u2660");
+		
+		System.out.println(d);
+		System.out.println(d.deal());
+		*/
+		System.out.println(d);
+		System.out.println("**** Shuffle Deck ****");
+		d.shuffle();
+		System.out.println(d);
+		d.shuffle();
+		System.out.println(d);
+		d.shuffle();
+		System.out.println(d);
 	}
 }
