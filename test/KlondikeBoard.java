@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 public class KlondikeBoard
 {
@@ -52,11 +53,6 @@ public class KlondikeBoard
      * for example, pileSize[0] is the size of the first pile on the board.
      */
     private int[] pileSize;
-
-    /**
-     * foundationSize manages the size of each foundation
-     */
-    private int[] foundationSize;
 
     public KlondikeBoard() {
         /** Initialize Deck */
@@ -138,6 +134,13 @@ public class KlondikeBoard
         return this.stockSize;
     }
 
+    /**
+     * @return remaining(undealt) cards on the stock
+     */
+    public int undealtSize() {
+        return deck.size();
+    }
+
     /** 
      * There are BOARD_SIZE piles on the board.
      * This method tells how many cards there are in a designated pile
@@ -190,7 +193,6 @@ public class KlondikeBoard
             // if the destination card's position is not last of its pile,
             // return without doing anything
             if (c2.pos() != pileSize(c2.rowNum()) - 1){
-                // TODO ERROR
                 return;
             } 
 
@@ -258,6 +260,7 @@ public class KlondikeBoard
                 
                 // set the original piles card position to null
                 piles[c1.rowNum()][pileSize[c1.rowNum()]] = null;
+
                 // set the card beneath the original piles card to visible
                 if (pileSize[c1.rowNum()] != 0) {
                     setCardVisible(c1.rowNum(), pileSize[c1.rowNum()] - 1);
@@ -289,7 +292,6 @@ public class KlondikeBoard
         }
         
         // ***************** STOCK TO PILES *****************
-        // TODO Stock deal --> shift?? Think about it
         else if (c1.from() == CardInfo.STOCK && c2.from() == CardInfo.PILES) {
             /*
                 Decrement Stock Size
@@ -372,14 +374,53 @@ public class KlondikeBoard
         }
     }
 
-    private void printFoundations() {
-        for (int i = 0; i < foundations.length; i++) {
-            System.out.println("Foundation #" + i);
-            for (int j = 0; j < fSize[i]; j++) {
-                System.out.printf("%s\t", foundations[i][j]);
-            }
-            System.out.println();
+
+    /**
+     * Evaluates if the game is won or not
+     * @return true if the user has won the game, false if not
+     */
+    public boolean evaluateWin() {
+        for (int i = 0; i < 4; i++) {
+            if (fSize[i] != 13) return false;
         }
+
+        return true;
+    }
+
+    public boolean evaluateLoss() {
+
+        /*=============================================== START OF STOCK =========================================================*/
+        int tmpSize = deck.size();
+
+        deck.stack();
+        while (!deck.isEmpty()) {
+            deck.deal();
+            // STOCK AND FOUNDATIONS
+            for (int i = 0; i < foundations.length; i++) {
+                if (isLegal(new ArrayList<CardInfo>(Arrays.asList(new CardInfo(CardInfo.STOCK), new CardInfo(i, CardInfo.FOUNDATIONS))))) return false;
+            }
+            
+            // STOCK AND PILES
+            for (int i = 0; i < piles.length; i++) {
+                // evaluate last card of each pile
+                if (pileSize(i) > 0 && isLegal(new ArrayList<CardInfo>(Arrays.asList(new CardInfo(CardInfo.STOCK), new CardInfo(i, pileSize(i) - 1, CardInfo.PILES))))) return false;
+            }
+
+            // STOCK AND EMPTYPILES
+            for (int i = 0; i < piles.length; i++) {
+                if (pileSize(i) == 0 && isLegal(new ArrayList<CardInfo>(Arrays.asList(new CardInfo(CardInfo.STOCK), new CardInfo(CardInfo.EMPTY_PILE))))) return false;
+            }
+        }
+
+        deck.stack(tmpSize);
+        /*=============================================== END OF STOCK =========================================================*/
+        
+        /*=============================================== START OF FOUNDATIONS =========================================================*/
+        /*=============================================== END OF FOUNDATIONS =========================================================*/
+
+        /*=============================================== START OF PILES =========================================================*/
+        /*=============================================== END OF PILES =========================================================*/
+        return true;
     }
 
     /**
@@ -387,14 +428,7 @@ public class KlondikeBoard
      * In klondike every legal play is a 2-card selection. 
      * @param selectedCards is a list of cards that determines if the selected card set is legal for playing
      */
-    public boolean isLegal(List<CardInfo> selectedCards) {
-        return isAlternated(selectedCards);
-    }
-
-    /**
-     * Evaluates if two selected cards are alternate in suit color and point value
-     */
-    private boolean isAlternated(List<CardInfo> selectedCards) {
+    private boolean isLegal(List<CardInfo> selectedCards) {
         CardInfo p1 = selectedCards.get(0);
         CardInfo p2 = selectedCards.get(1);
         //move from c2 to c1
@@ -402,7 +436,6 @@ public class KlondikeBoard
 
         // ***************** PILES TO PILES *****************
         if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.PILES) {
-            System.out.println("***************** PILES TO PILES *****************");
             c1 = piles[p1.rowNum()][p1.pos()];
             c2 = piles[p2.rowNum()][p2.pos()];
 
@@ -415,7 +448,6 @@ public class KlondikeBoard
         
         // ***************** FOUNDATIONS TO PILES *****************
         else if (p1.from() == CardInfo.FOUNDATIONS && p2.from() == CardInfo.PILES) {
-            System.out.println("***************** FOUNDATIONS TO PILES *****************");
             // if card from piles is not the last of its pile, return false
             if (p2.pos() + 1 != pileSize[p1.rowNum()]) {
                 return false;
@@ -430,7 +462,6 @@ public class KlondikeBoard
         
         // ***************** STOCK TO PILES *****************
         else if (p1.from() == CardInfo.STOCK && p2.from() == CardInfo.PILES) {
-            System.out.println("***************** STOCK TO PILES *****************");
             // if card from piles is not the last of its pile, return false
             if (p2.pos() + 1 != pileSize[p2.rowNum()]) {
                 return false;
@@ -445,7 +476,6 @@ public class KlondikeBoard
         
         // ***************** STOCK TO EMPTY PILE *****************
         else if (p1.from() == CardInfo.STOCK && p2.from() == CardInfo.EMPTY_PILE) {
-            System.out.println("***************** STOCK TO EMPTY PILE *****************");
             c1 = getStockTopCard();
             // if c1's rank is not king, return false
             
@@ -454,7 +484,6 @@ public class KlondikeBoard
         
         // ***************** PILE TO EMPTY PILE *****************
         else if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.EMPTY_PILE) {
-            System.out.println("***************** PILE TO EMPTY PILE *****************");
             c1 = piles[p1.rowNum()][p1.pos()];
             
             return c1.rank().equals("king");
@@ -462,7 +491,6 @@ public class KlondikeBoard
         
         // ***************** STOCK TO FOUNDATIONS *****************
         else if (p1.from() == CardInfo.STOCK && p2.from() == CardInfo.FOUNDATIONS) {
-            System.out.println("***************** STOCK TO FOUNDATIONS *****************");
             c1 = getStockTopCard();
             c2 = getFoundationTop(p2.rowNum());
             
@@ -476,7 +504,6 @@ public class KlondikeBoard
         
         // ***************** PILES TO FOUNDATIONS *****************
         else if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.FOUNDATIONS) {
-            System.out.println("***************** PILES TO FOUNDATIONS *****************");
             // if card from piles is not the last of its pile, return false
             if (p1.pos() + 1 != pileSize[p1.rowNum()]) {
                 return false;
@@ -497,29 +524,6 @@ public class KlondikeBoard
         return false;
     }
     
-    /**
-     * It determines whether a series of cards from a selected one to the bottom is in correct order or not
-     *@param c is the card which the series starts from
-     */
-    private boolean isOrder(CardInfo c){
-        int cRow = c.rowNum();
-        if(c.from() == CardInfo.PILES){
-            for(int seq = c.pos() + 1 ; seq < pileSize(cRow); seq++){
-                if(piles[cRow][seq].pointValue() != piles[cRow][seq - 1].pointValue() - 1)
-                return false;
-                if(isBlack(piles[cRow][seq]) == isBlack(piles[cRow][seq-1]))
-                return false;
-            }
-        }
-        return true;
-    }
-    /**
-     * It determines whether a selected card is the last card at the pile or not
-     * @param c is the selected card
-     */
-    private boolean isLast(CardInfo c) {
-        return (c.from() == CardInfo.PILES && c.pos() == piles[c.rowNum()].length -1 );
-    }
     /** 
      * It determines whether a suit is black or not
      * @param suit is the input Card object to be determined black or not
@@ -527,19 +531,6 @@ public class KlondikeBoard
     private boolean isBlack(Card c) {
         String suit = c.suit();
         if (suit.equals("spades") || suit.equals("clubs")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /** 
-     * It determines whether a suit is red or not
-     * @param suit is the input Card object to be determined red or not
-     */
-    private boolean isRed(Card c) {
-        String suit = c.suit();
-        if (suit.equals("hearts") || suit.equals("diamonds")) {
             return true;
         } else {
             return false;

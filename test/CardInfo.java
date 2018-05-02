@@ -22,6 +22,11 @@ class CardInfo
     public CardInfo(int _from) {
         this(0, 0, _from);
     }
+
+    public CardInfo(int _rowNum, int _from) {
+        this(_rowNum, 0, _from);
+    }
+
     public CardInfo(int _rowNum, int _pos, int _from) {
         this.rowNum = _rowNum;
         this.pos = _pos;
