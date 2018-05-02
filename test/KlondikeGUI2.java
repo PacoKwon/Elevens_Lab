@@ -183,9 +183,6 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
     }
     
     public void repaint() {
-        for (int i = 0; i < 4; i++) {
-            // System.out.printf("Foundation #%d %s\n", i, board.getFoundationTop(i));
-        }
         System.out.printf("Current Selected Cards: %d %s\n", selectedCards.size(), selectedCards);
         /** Board Paint */
         for (int i = 0; i < board.size(); i++) {
@@ -376,24 +373,6 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
             }
         }
     }
-    /**
-     * traverse stock, foundation, piles and return ArrayList of CardInfo instances
-     * @return ArrayList of CardInfo instances
-     */
-    public List<CardInfo> getSelected() {
-        // traverse stock, foundation, piles and return ArrayList of CardInfo instances
-        List<CardInfo> positions = new ArrayList<CardInfo>();
-
-        // STOCK
-        if (topCardSelected) {
-            positions.add(new CardInfo(CardInfo.STOCK));
-        }
-
-        
-
-
-        return positions;
-    }
 
     /** 
      * Clear variables related to selections.
@@ -480,11 +459,13 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
 
                 // When clicked and deck is not empty, just deal another card from the deck 
                 Card dealtCard = board.dealStock();
+                /*
                 System.out.printf("Dealt Card: %s\n", dealtCard);
                 System.out.printf("Remaining Stock Size: %d\n", board.stockSize());
                 System.out.printf("Current Deck Size: %d\n", board.deck.size());
                 System.out.printf("Current Deck ALL: %s\n", board.deck);
                 System.out.println("\n");
+                */
                 repaint();
                 return;
             }
@@ -503,10 +484,9 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
                         selectCount++;
 
                         if (selectedCards.size() == 2) {
-                            System.out.println("TOPTOPTOP");
-
-                            board.moveCards(selectedCards);
                             clearSelections();
+                            repaint();
+                            return;
                         }
                     } else {
                         selectedCards.remove(info);
@@ -539,8 +519,8 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
                         
                         // selected cards reach 2
                         if (selectedCards.size() == 2) {
-                            System.out.println("MOVEMOVEMOVE");
                             // TODO Evaluate Legal Play
+
                             board.moveCards(selectedCards);
 
                             updateCardVisibility();
@@ -566,7 +546,7 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
             // Traverse Every Card on the board (piles) and find which one is clicked
             for (int i = 0; i < board.size(); i++) {
                 for (int j = 0; j < board.pileSize(i); j++) {
-                    if (e.getSource().equals(displayCards[i][j]) && board.cardAtPiles(i, j) != null) {
+                    if (e.getSource().equals(displayCards[i][j]) && board.cardAtPiles(i, j) != null && board.isVisible(i, j)) {
                         CardInfo info = new CardInfo(i, j, CardInfo.PILES); // make new CardInfo instance
                         selections[i][j] = !selections[i][j];
                         
@@ -604,7 +584,6 @@ public class KlondikeGUI2 extends JFrame implements ActionListener {
                         selectedCards.add(info);
                         selectCount++;
                         if (selectedCards.size() == 2) {
-                            System.out.println("EMPTY PILE 2 ---->> move");
                             board.moveCards(selectedCards);
 
                             updateCardVisibility();

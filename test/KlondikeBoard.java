@@ -126,7 +126,6 @@ public class KlondikeBoard
 
     public Card getFoundationTop(int which) {
         if (fSize[which] > 0) {
-            System.out.printf("which: %d\n", fSize[which]);
             return foundations[which][fSize[which] - 1];
         } else {
             return null;
@@ -177,6 +176,8 @@ public class KlondikeBoard
     }
 
     public void moveCards(ArrayList<CardInfo> positions) {
+        if (!isLegal(positions)) return;
+        
         // CardInfo: rowNum, pos, from
         // let's say that element 0 goes on top of element 1. c1 to c2
         CardInfo c1 = positions.get(0);
@@ -387,91 +388,111 @@ public class KlondikeBoard
      * @param selectedCards is a list of cards that determines if the selected card set is legal for playing
      */
     public boolean isLegal(List<CardInfo> selectedCards) {
-        if (selectedCards.size() == 2) {
-            return isAlternated(selectedCards);
-        } else {
-            return false;
-        }
+        return isAlternated(selectedCards);
     }
 
     /**
      * Evaluates if two selected cards are alternate in suit color and point value
      */
     private boolean isAlternated(List<CardInfo> selectedCards) {
-        if (selectedCards.size() == 2) {
-            CardInfo p1 = selectedCards.get(1);
-            CardInfo p2 = selectedCards.get(0);
-            //move from c2 to c1
-            Card c1, c2;
+        CardInfo p1 = selectedCards.get(0);
+        CardInfo p2 = selectedCards.get(1);
+        //move from c2 to c1
+        Card c1, c2;
 
-            // Piles to Piles. If both cards are from a pile 
-            if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.PILES) {
-                c1 = piles[p1.rowNum()][p1.pos()];
-                c2 = piles[p2.rowNum()][p2.pos()];
+        // ***************** PILES TO PILES *****************
+        if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.PILES) {
+            System.out.println("***************** PILES TO PILES *****************");
+            c1 = piles[p1.rowNum()][p1.pos()];
+            c2 = piles[p2.rowNum()][p2.pos()];
 
-                // two cards':
-                // colors are different,
-                // c1's point value is one larger than that of c2
-                return (isBlack(c1) != isBlack(c2)) && (c2.pointValue() + 1 == c1.pointValue())
-                                && isOrder(p2) && isLast(p1);
-            }
-            // to Empty Piles
-            else if(p1.from() == CardInfo.EMPTY_PILE) {
-                if(p2.from() == CardInfo.PILES) {
-                    return (piles[p2.rowNum()][p2.pos()].pointValue() == 13 && isOrder(p2));
-                }
-                else if(p2.from() == CardInfo.STOCK) {
-                    return deck.getTop().pointValue() == 13;
-                }
+            // two cards':
+            // colors are different,
+            // c1's point value is one larger than that of c2
+            return (isBlack(c1) != isBlack(c2)) && (c2.pointValue() == c1.pointValue() + 1);
+        }
 
-            }
-            // If one is from a pile and another is from a foundation. foundation to pile
-            else if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.FOUNDATIONS) {
-                c1 = piles[p1.rowNum()][p1.pos()];
-                c2 = foundations[p2.rowNum()][p2.pos()];
-                
-                return (isBlack(c1) == !isBlack(c2) && c1.pointValue() == c2.pointValue() + 1);
+        
+        // ***************** FOUNDATIONS TO PILES *****************
+        else if (p1.from() == CardInfo.FOUNDATIONS && p2.from() == CardInfo.PILES) {
+            System.out.println("***************** FOUNDATIONS TO PILES *****************");
+            // if card from piles is not the last of its pile, return false
+            if (p2.pos() + 1 != pileSize[p1.rowNum()]) {
+                return false;
             }
 
-            // pile to foundation
-            else if (p1.from() == CardInfo.FOUNDATIONS && p2.from() == CardInfo.PILES)
-            {
-                c1 = foundations[p1.rowNum()][p1.pos()];
-                c2 = piles[p2.rowNum()][p2.pos()];
-
-                 
-                //suits are equal and pile card's value is bigger than foundation card's value by 1
-                 
-                return (c1.suit().equals(c2.suit()) && c2.pointValue() == c1.pointValue() + 1
-                                    && isLast(p1));
+            c1 = getFoundationTop(p1.rowNum());
+            c2 = piles[p2.rowNum()][p2.pos()];
+            
+            // c1 + 1 = c2, color different
+            return ((c1.pointValue() + 1 == c2.pointValue()) && (isBlack(c1) != isBlack(c2)));
+        }
+        
+        // ***************** STOCK TO PILES *****************
+        else if (p1.from() == CardInfo.STOCK && p2.from() == CardInfo.PILES) {
+            System.out.println("***************** STOCK TO PILES *****************");
+            // if card from piles is not the last of its pile, return false
+            if (p2.pos() + 1 != pileSize[p2.rowNum()]) {
+                return false;
             }
-            // stock to pile 
-            else if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.STOCK) {
-                // card from stock has to be lesser than that from piles 
-                c1 = piles[p1.rowNum()][p1.pos()];
-                c2 = deck.getTop();
-
-                // suits are different in color and stock card's value is smaller than pile card's value by 1
-                return (isBlack(c1) == !isBlack(c2) && (c1.pointValue() == c2.pointValue() + 1)
-                                    && isLast(p1));
+            
+            c1 = getStockTopCard();
+            c2 = piles[p2.rowNum()][p2.pos()];
+            
+            // c1 + 1 = c2, color different
+            return ((c1.pointValue() + 1 == c2.pointValue()) && (isBlack(c1) != isBlack(c2)));
+        }
+        
+        // ***************** STOCK TO EMPTY PILE *****************
+        else if (p1.from() == CardInfo.STOCK && p2.from() == CardInfo.EMPTY_PILE) {
+            System.out.println("***************** STOCK TO EMPTY PILE *****************");
+            c1 = getStockTopCard();
+            // if c1's rank is not king, return false
+            
+            return c1.rank().equals("king");
+        }
+        
+        // ***************** PILE TO EMPTY PILE *****************
+        else if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.EMPTY_PILE) {
+            System.out.println("***************** PILE TO EMPTY PILE *****************");
+            c1 = piles[p1.rowNum()][p1.pos()];
+            
+            return c1.rank().equals("king");
+        }
+        
+        // ***************** STOCK TO FOUNDATIONS *****************
+        else if (p1.from() == CardInfo.STOCK && p2.from() == CardInfo.FOUNDATIONS) {
+            System.out.println("***************** STOCK TO FOUNDATIONS *****************");
+            c1 = getStockTopCard();
+            c2 = getFoundationTop(p2.rowNum());
+            
+            if (c2 == null) {
+                return c1.rank().equals("ace");
             }
-            //stock to foundation
-            else if(p1.from() == CardInfo.FOUNDATIONS && p2.from() == CardInfo.STOCK) {
-                c1 = foundations[p1.rowNum()][p1.pos()];
-                c2 = deck.getTop();
-
-                return (isBlack(c1) != isBlack(c2) && c1.pointValue() == c2.pointValue() + 1);
+            
+            // c1 == c2 + 1, suit same
+            return ((c1.pointValue() == c2.pointValue() + 1) && c1.suit().equals(c2.suit()));
+        }
+        
+        // ***************** PILES TO FOUNDATIONS *****************
+        else if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.FOUNDATIONS) {
+            System.out.println("***************** PILES TO FOUNDATIONS *****************");
+            // if card from piles is not the last of its pile, return false
+            if (p1.pos() + 1 != pileSize[p1.rowNum()]) {
+                return false;
             }
-
-            //to empty foundation
-            else if(p1.from() == CardInfo.EMPTY_FOUNDATION) {
-                if(p2.from() == CardInfo.PILES) {
-                    return (piles[p2.rowNum()][p1.pos()].pointValue() == 1 && isLast(p2));
-                }
-                else if(p2.from() == CardInfo.STOCK) {
-                    return deck.getTop().pointValue() == 1;
-                }
+    
+            c1 = piles[p1.rowNum()][p1.pos()];
+            c2 = getFoundationTop(p2.rowNum());
+    
+            // if c2 is null ( = if foundation is empty )
+            if (c2 == null) {
+                // if rank is ace, return true
+                return c1.rank().equals("ace");
             }
+    
+            // c1 == c2 + 1, suit same
+            return ((c1.pointValue() == c2.pointValue() + 1) && c1.suit().equals(c2.suit()));
         }
         return false;
     }
@@ -485,9 +506,9 @@ public class KlondikeBoard
         if(c.from() == CardInfo.PILES){
             for(int seq = c.pos() + 1 ; seq < pileSize(cRow); seq++){
                 if(piles[cRow][seq].pointValue() != piles[cRow][seq - 1].pointValue() - 1)
-                    return false;
+                return false;
                 if(isBlack(piles[cRow][seq]) == isBlack(piles[cRow][seq-1]))
-                    return false;
+                return false;
             }
         }
         return true;
