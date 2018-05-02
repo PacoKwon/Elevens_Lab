@@ -54,6 +54,9 @@ public class KlondikeBoard
      */
     private int[] pileSize;
 
+    /** Flag to evaluate gameover condition */
+    public boolean gameOverFlag;
+
     public KlondikeBoard() {
         /** Initialize Deck */
         deck = new Deck(RANKS, SUITS, POINT_VALUES);
@@ -75,6 +78,9 @@ public class KlondikeBoard
 
         /** Initialize visible */
         visible = new boolean[BOARD_SIZE][20];
+
+        // initialize gameoverflag
+        gameOverFlag = true;
 
         /** Deal cards at start of game. */
         dealMyCards();
@@ -180,7 +186,10 @@ public class KlondikeBoard
 
     public void moveCards(ArrayList<CardInfo> positions) {
         if (!isLegal(positions)) return;
-        
+
+        // If there is legal move, set gameoverflag to false
+        gameOverFlag = false;
+
         // CardInfo: rowNum, pos, from
         // let's say that element 0 goes on top of element 1. c1 to c2
         CardInfo c1 = positions.get(0);
@@ -388,39 +397,42 @@ public class KlondikeBoard
     }
 
     public boolean evaluateLoss() {
+        return gameOverFlag;
+        // /*
+        // /*=============================================== START OF STOCK =========================================================*/
+        // int tmpSize = deck.size();
 
-        /*=============================================== START OF STOCK =========================================================*/
-        int tmpSize = deck.size();
-
-        deck.stack();
-        while (!deck.isEmpty()) {
-            deck.deal();
-            // STOCK AND FOUNDATIONS
-            for (int i = 0; i < foundations.length; i++) {
-                if (isLegal(new ArrayList<CardInfo>(Arrays.asList(new CardInfo(CardInfo.STOCK), new CardInfo(i, CardInfo.FOUNDATIONS))))) return false;
-            }
+        // deck.stack();
+        // while (!deck.isEmpty()) {
+        //     deck.deal();
+        //     // STOCK AND FOUNDATIONS
+        //     for (int i = 0; i < foundations.length; i++) {
+        //         if (isLegal(new ArrayList<CardInfo>(Arrays.asList(new CardInfo(CardInfo.STOCK), new CardInfo(i, CardInfo.FOUNDATIONS))))) return false;
+        //     }
             
-            // STOCK AND PILES
-            for (int i = 0; i < piles.length; i++) {
-                // evaluate last card of each pile
-                if (pileSize(i) > 0 && isLegal(new ArrayList<CardInfo>(Arrays.asList(new CardInfo(CardInfo.STOCK), new CardInfo(i, pileSize(i) - 1, CardInfo.PILES))))) return false;
-            }
+        //     // STOCK AND PILES
+        //     for (int i = 0; i < piles.length; i++) {
+        //         // evaluate last card of each pile
+        //         if (pileSize(i) > 0 && isLegal(new ArrayList<CardInfo>(Arrays.asList(new CardInfo(CardInfo.STOCK), new CardInfo(i, pileSize(i) - 1, CardInfo.PILES))))) return false;
+        //     }
 
-            // STOCK AND EMPTYPILES
-            for (int i = 0; i < piles.length; i++) {
-                if (pileSize(i) == 0 && isLegal(new ArrayList<CardInfo>(Arrays.asList(new CardInfo(CardInfo.STOCK), new CardInfo(CardInfo.EMPTY_PILE))))) return false;
-            }
-        }
+        //     // STOCK AND EMPTYPILES
+        //     for (int i = 0; i < piles.length; i++) {
+        //         if (pileSize(i) == 0 && isLegal(new ArrayList<CardInfo>(Arrays.asList(new CardInfo(CardInfo.STOCK), new CardInfo(CardInfo.EMPTY_PILE))))) return false;
+        //     }
+        // }
 
-        deck.stack(tmpSize);
-        /*=============================================== END OF STOCK =========================================================*/
+        // deck.stack(tmpSize);
+        // /*=============================================== END OF STOCK =========================================================*/
         
-        /*=============================================== START OF FOUNDATIONS =========================================================*/
-        /*=============================================== END OF FOUNDATIONS =========================================================*/
+        // /*=============================================== START OF FOUNDATIONS =========================================================*/
 
-        /*=============================================== START OF PILES =========================================================*/
-        /*=============================================== END OF PILES =========================================================*/
-        return true;
+        // /*=============================================== END OF FOUNDATIONS =========================================================*/
+
+        // /*=============================================== START OF PILES =========================================================*/
+
+        // /*=============================================== END OF PILES =========================================================*/
+        // return true;
     }
 
     /**

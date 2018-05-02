@@ -104,6 +104,7 @@ public class KlondikeGUI extends JFrame implements ActionListener {
 
     private JLabel stockCount;
 
+
     public KlondikeGUI(KlondikeBoard gameBoard) {
         addMouseListener(new MyMouseListener());
         board = gameBoard;
@@ -142,6 +143,7 @@ public class KlondikeGUI extends JFrame implements ActionListener {
         msg = new JLabel();
 
         stockCount = new JLabel();
+
 
         /** 
          * Initialize selections variable 
@@ -270,6 +272,14 @@ public class KlondikeGUI extends JFrame implements ActionListener {
             System.out.println("================================ You Won! ================================");
             msg.setVisible(true);
         }
+
+        if (board.deck.isEmpty() && board.gameOverFlag) {
+            msg.setForeground(Color.RED);
+            msg.setText("You Lost!");
+            msg.setVisible(true);
+        }
+
+        
         pack();
         panel.repaint();
     }
@@ -474,6 +484,7 @@ public class KlondikeGUI extends JFrame implements ActionListener {
 
                 // when clicked and deck is empty, stack stock. repaint, and return without dealing 
                 if (board.deck.isEmpty()) {
+                    board.gameOverFlag = true;
                     System.out.println("EMPTY! Stacking...");
                     board.deck.stack(board.stockSize());
                     repaint();
