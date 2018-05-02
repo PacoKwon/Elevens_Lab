@@ -72,7 +72,7 @@ public class KlondikeBoard
         pileSize = new int[BOARD_SIZE];
 
         /** Size of stock */
-        stockSize = 24;
+        stockSize = 52;
 
         /** size of foundations */
         fSize = new int[4];
@@ -114,6 +114,7 @@ public class KlondikeBoard
         return BOARD_SIZE;
     }
 
+
     public Card cardAtPiles(int pile, int pos) {
         /** pos is smaller than the size of pile */
         if (pos < pileSize[pile]) {
@@ -125,13 +126,14 @@ public class KlondikeBoard
 
     public Card getFoundationTop(int which) {
         if (fSize[which] > 0) {
+            System.out.printf("which: %d\n", fSize[which]);
             return foundations[which][fSize[which] - 1];
         } else {
             return null;
         }
     }
     /**
-     * @return total number of cards on the  (dealt + undealt)
+     * @return total number of cards on the stock (dealt + undealt)
      */
     public int stockSize() {
         return this.stockSize;
@@ -150,9 +152,8 @@ public class KlondikeBoard
      * @return the top card of dealt cards in the remaining deck
      */
     public Card getStockTopCard() {
-
         /** All cards are unflipped. Facing downwards */
-        if (stockSize() == deck.size()) {
+        if (stockSize == deck.size()) {
             return null;
         } else {
             return deck.getTop();
@@ -167,6 +168,219 @@ public class KlondikeBoard
     public boolean isVisible(int pile, int pos) {
         return this.visible[pile][pos];
     }
+
+    /**
+     * Sets the visibility of a card in a pile to true
+     */
+    public void setCardVisible(int pile, int pos) {
+        visible[pile][pos] = true;
+    }
+
+    public void moveCards(ArrayList<CardInfo> positions) {
+        // CardInfo: rowNum, pos, from
+        // let's say that element 0 goes on top of element 1. c1 to c2
+        CardInfo c1 = positions.get(0);
+        CardInfo c2 = positions.get(1);
+        System.out.println(c1);
+        System.out.println(c2);
+
+        // ***************** PILES TO PILES *****************
+        if (c1.from() == CardInfo.PILES && c2.from() == CardInfo.PILES) {
+            // if the destination card's position is not last of its pile,
+            // return without doing anything
+            if (c2.pos() != pileSize(c2.rowNum()) - 1){
+                // TODO ERROR
+                return;
+            } 
+
+            // if the moving card is the last card of its pile
+            if (c1.pos() == pileSize(c1.rowNum()) - 1) {
+                Card tmp = piles[c1.rowNum()][c1.pos()]; // get the last card of its pile
+                piles[c1.rowNum()][c1.pos()] = null; // set the last card to null
+
+                System.out.printf("PileSize c1: %d\n", pileSize[c1.rowNum()]);
+                System.out.printf("PileSize c2: %d\n", pileSize[c2.rowNum()]);
+                pileSize[c1.rowNum()]--; // decrease the pile's size
+                pileSize[c2.rowNum()]++; // increase the destination pile's size
+
+                piles[c2.rowNum()][c2.pos() + 1] = tmp; // set the card to the destination pile
+
+                setCardVisible(c2.rowNum(), c2.pos() + 1); // set the moved card's visibility true
+                if (c1.pos() != 0) {
+                    setCardVisible(c1.rowNum(), c1.pos() - 1); // visibility of card that was originally beneath the moved card
+                } else { // if the original card was the only card of its pile
+
+                }
+            }
+
+            // if the moving card is not the last card of its pile
+            // in other words, when there are other cards on top of c1
+            else {
+                // series of cards
+                Card[] tmp = new Card[pileSize[c1.rowNum()] - c1.pos()];
+
+                // initialize tmp array, and then set the series of cards to null.
+                for (int i = c1.pos(); i < pileSize[c1.rowNum()]; i++) {
+                    tmp[i - c1.pos()] = piles[c1.rowNum()][i];
+                    piles[c1.rowNum()][i] = null;
+                }
+
+                // change pileSize
+                pileSize[c1.rowNum()] = c1.pos();
+
+                // set the card beneath c1 to visible
+                if (c1.pos() != 0) setCardVisible(c1.rowNum(), c1.pos() - 1);
+
+                // add all the cards in tmp array on top of c2
+                for (int i = pileSize[c2.rowNum()]; i < pileSize[c2.rowNum()] + tmp.length; i++) {
+                    piles[c2.rowNum()][i] = tmp[i - pileSize[c2.rowNum()]];
+                    setCardVisible(c2.rowNum(), i);
+                }
+                pileSize[c2.rowNum()] += tmp.length;
+            }
+        }
+        
+        // ***************** PILES TO FOUNDATIONS *****************
+        else if (c1.from() == CardInfo.PILES && c2.from() == CardInfo.FOUNDATIONS) {
+            // only the top card of piles should be movable towards foundations
+            if (c1.pos() == pileSize[c1.rowNum()] - 1) {
+                
+                System.out.println("Pile: " + piles[c1.rowNum()][c1.pos()]);
+                // set the piles card to the foundations
+                foundations[c2.rowNum()][fSize[c2.rowNum()]] = piles[c1.rowNum()][c1.pos()];
+                
+                // increase respective foundation size
+                fSize[c2.rowNum()]++;
+                
+                // decrease respective piles size
+                pileSize[c1.rowNum()]--;
+                
+                // set the original piles card position to null
+                piles[c1.rowNum()][pileSize[c1.rowNum()]] = null;
+                // set the card beneath the original piles card to visible
+                if (pileSize[c1.rowNum()] != 0) {
+                    setCardVisible(c1.rowNum(), pileSize[c1.rowNum()] - 1);
+                }
+            }
+        }
+
+        // ***************** FOUNDATIONS TO PILES *****************
+        else if (c1.from() == CardInfo.FOUNDATIONS && c2.from() == CardInfo.PILES) {
+            if (c2.pos() == pileSize[c2.rowNum()] - 1) {
+                
+                System.out.println(foundations[c1.rowNum()][fSize[c1.rowNum()] - 1]);
+                piles[c2.rowNum()][pileSize[c2.rowNum()]] = foundations[c1.rowNum()][fSize[c1.rowNum()] - 1];
+                
+                // decrease foundations size
+                fSize[c1.rowNum()]--;
+                
+                // increase piles size
+                pileSize[c2.rowNum()]++;
+                
+                // set the original foundation card position to null
+                foundations[c1.rowNum()][fSize[c1.rowNum()]] = null;
+                
+                setCardVisible(c2.rowNum(), pileSize[c2.rowNum()] - 1);
+                for (int i = 0; i < foundations.length; i++) {
+                    System.out.println(fSize[i]);
+                }
+            }
+        }
+        
+        // ***************** STOCK TO PILES *****************
+        // TODO Stock deal --> shift?? Think about it
+        else if (c1.from() == CardInfo.STOCK && c2.from() == CardInfo.PILES) {
+            /*
+                Decrement Stock Size
+                Move the selected Card just after the last stock card
+            */
+            Card tmp = getStockTopCard();
+            // index stockSize - 1 is the first element of already-dealt cards
+            deck.moveCard(tmp, this.stockSize - 1);
+            
+            // decrement stock size
+            this.stockSize--;
+            
+            // add the card to the pile (new destination)
+            piles[c2.rowNum()][pileSize[c2.rowNum()]] = tmp;
+            
+            // set moved card visible
+            setCardVisible(c2.rowNum(), pileSize[c2.rowNum()]);
+            
+            // increment pile size
+            pileSize[c2.rowNum()]++;
+        }
+        
+        // ***************** STOCK TO EMPTY PILE *****************
+        else if (c1.from() == CardInfo.STOCK && c2.from() == CardInfo.EMPTY_PILE) {
+            Card tmp = getStockTopCard();
+            
+            // index stockSize - 1 is the first element of already-dealt cards
+            deck.moveCard(tmp, this.stockSize - 1);
+            
+            // decrement stock size
+            this.stockSize--;
+            
+            // add the card to the pile (new destination)
+            piles[c2.rowNum()][pileSize[c2.rowNum()]] = tmp;
+            
+            // set moved card visible
+            setCardVisible(c2.rowNum(), pileSize[c2.rowNum()]);
+            
+            // increment pile size
+            pileSize[c2.rowNum()]++;
+        }
+
+        // ***************** PILE TO EMPTY PILE *****************
+        else if (c1.from() == CardInfo.PILES && c2.from() == CardInfo.EMPTY_PILE) {
+            // System.out.println("PILES ===>> EMPTY_PILE");
+
+            // series of cards
+            Card[] tmp = new Card[pileSize[c1.rowNum()] - c1.pos()];
+
+            // initialize tmp array, and then set the series of cards to null.
+            for (int i = c1.pos(); i < pileSize[c1.rowNum()]; i++) {
+                tmp[i - c1.pos()] = piles[c1.rowNum()][i];
+                piles[c1.rowNum()][i] = null;
+            }
+
+            // change pileSize
+            pileSize[c1.rowNum()] = c1.pos();
+
+            // set the card beneath c1 to visible
+            if (c1.pos() != 0) setCardVisible(c1.rowNum(), c1.pos() - 1);
+
+            for (int i = pileSize[c2.rowNum()]; i < pileSize[c2.rowNum()] + tmp.length; i++) {
+                piles[c2.rowNum()][i] = tmp[i - pileSize[c2.rowNum()]];
+                setCardVisible(c2.rowNum(), i);
+            }
+            pileSize[c2.rowNum()] += tmp.length;
+        }
+
+        // ***************** STOCK TO FOUNDATIONS *****************
+        else if (c1.from() == CardInfo.STOCK && c2.from() == CardInfo.FOUNDATIONS) {
+            Card tmp = getStockTopCard();
+
+            deck.moveCard(tmp, this.stockSize - 1);
+
+            this.stockSize--;
+
+            foundations[c2.rowNum()][fSize[c2.rowNum()]] = tmp;
+
+            fSize[c2.rowNum()]++;
+        }
+    }
+
+    private void printFoundations() {
+        for (int i = 0; i < foundations.length; i++) {
+            System.out.println("Foundation #" + i);
+            for (int j = 0; j < fSize[i]; j++) {
+                System.out.printf("%s\t", foundations[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
     /**
      * Evaluates if a play is legal or not. 
      * In klondike every legal play is a 2-card selection. 
@@ -185,8 +399,8 @@ public class KlondikeBoard
      */
     private boolean isAlternated(List<CardInfo> selectedCards) {
         if (selectedCards.size() == 2) {
-            CardInfo p1 = selectedCards.get(0);
-            CardInfo p2 = selectedCards.get(1);
+            CardInfo p1 = selectedCards.get(1);
+            CardInfo p2 = selectedCards.get(0);
             //move from c2 to c1
             Card c1, c2;
 
@@ -194,6 +408,10 @@ public class KlondikeBoard
             if (p1.from() == CardInfo.PILES && p2.from() == CardInfo.PILES) {
                 c1 = piles[p1.rowNum()][p1.pos()];
                 c2 = piles[p2.rowNum()][p2.pos()];
+
+                // two cards':
+                // colors are different,
+                // c1's point value is one larger than that of c2
                 return (isBlack(c1) != isBlack(c2)) && (c2.pointValue() + 1 == c1.pointValue())
                                 && isOrder(p2) && isLast(p1);
             }
@@ -215,7 +433,7 @@ public class KlondikeBoard
                 return (isBlack(c1) == !isBlack(c2) && c1.pointValue() == c2.pointValue() + 1);
             }
 
-            //pile to foundation
+            // pile to foundation
             else if (p1.from() == CardInfo.FOUNDATIONS && p2.from() == CardInfo.PILES)
             {
                 c1 = foundations[p1.rowNum()][p1.pos()];
@@ -259,14 +477,14 @@ public class KlondikeBoard
     }
     
     /**
-     * It determines wheter a series of cards from a selected one to the bottom is in correct order or not
+     * It determines whether a series of cards from a selected one to the bottom is in correct order or not
      *@param c is the card which the series starts from
      */
     private boolean isOrder(CardInfo c){
         int cRow = c.rowNum();
         if(c.from() == CardInfo.PILES){
-            for(int seq = c.pos() + 1 ; seq < piles[cRow].length ; seq++){
-                if(piles[cRow][seq].pointValue() != piles[cRow][seq-1].pointValue() - 1)
+            for(int seq = c.pos() + 1 ; seq < pileSize(cRow); seq++){
+                if(piles[cRow][seq].pointValue() != piles[cRow][seq - 1].pointValue() - 1)
                     return false;
                 if(isBlack(piles[cRow][seq]) == isBlack(piles[cRow][seq-1]))
                     return false;

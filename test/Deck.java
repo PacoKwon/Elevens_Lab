@@ -1,4 +1,3 @@
-import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +10,7 @@ public class Deck {
 	/**
 	 * cards contains all the cards in the deck.
 	 */
-	private List<Card> cards;
+	private ArrayList<Card> cards;
 
 	/**
 	 * size is the number of not-yet-dealt cards.
@@ -58,6 +57,21 @@ public class Deck {
 	}
 
 	/**
+	 * Moves the card in index "from" to index "to"
+	 * @param from the desired card's index
+	 * @param to the card's destination
+	 */
+	public void moveCard(Card c, int to) {
+		int from = cards.indexOf(c);
+		if (from == -1) {
+			System.out.println("ERROR! RETURNING");
+			return;
+		}
+		cards.remove(from);
+		cards.add(to, c);
+	}
+
+	/**
 	 * Randomly permute the given collection of cards
 	 * and reset the size to represent the entire deck.
 	 */
@@ -87,6 +101,15 @@ public class Deck {
 		return c;
 	}
 
+	public Card pull(int index) {
+		if (isEmpty()) {
+			return null;
+		}
+		size--;
+		Card c = cards.remove(index);
+
+		return c;
+	}
 	/**
 	 * Stacks the deck until the designated location
 	 * This stack method is inclusive of stackUntil.

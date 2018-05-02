@@ -53,7 +53,7 @@ class CardInfo
     
     @Override
     public String toString() {
-        String[] fromArr = {"Foundations", "Stock", "Piles"};
+        String[] fromArr = {"Foundations", "Stock", "Piles", "Empty_Pile", "Empty_Foundation"};
         String ret = String.format("Card from \"%s\": [rowNum: %d, pos: %d]", fromArr[from], rowNum, pos);
         return ret;
     }
